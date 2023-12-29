@@ -5,7 +5,9 @@ namespace Aslamhus\SpotifyClient;
 use GuzzleHttp\Client;
 
 /**
- * Spotify API client
+ * Spotify API client v1.0.0
+ *
+ * by @aslamhus
  *
  * Status Code	Description
  * 200	OK - The request has succeeded. The client can read the result of the request in the body and the headers of the response.
