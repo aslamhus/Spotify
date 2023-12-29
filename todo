@@ -1,0 +1,4 @@
+- Add interfaces/abstract classes for data fetching
+- add property: has fetched data
+- Artist object should conform to Album object, where you can pass data in via constructor or fetch it
+- add error handling to api fetches

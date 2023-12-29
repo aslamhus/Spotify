@@ -112,7 +112,7 @@ class Spotify
             'offset'    => $offset,
         ];
         if(!empty($market)) {
-            $query['market'] = $query;
+            $query['market'] = $market;
         }
         return $this->get($url, $query);
     }

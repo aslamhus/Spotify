@@ -20,24 +20,54 @@ use Aslamhus\SpotifyClient\SpotifyAccessToken;
 
 // Initialize the Spotify API client with an access token
 $accessToken = new SpotifyAccessToken('your-client-id', 'your-client-secret');
-$spotify = new Spotify($accessToken);
+$client = new Spotify($accessToken);
 ```
 
 ### Get Resource
 
 ```php
 // Example: Get artist information
-$artistData = $spotify->get('https://api.spotify.com/v1/artists/3WrFJ7ztbogyGnTHbHJFl2');
+$artistData = $client->get('https://api.spotify.com/v1/artists/3WrFJ7ztbogyGnTHbHJFl2');
 ```
 
 ### Search
 
 ```php
 // Example: Search for artists with a query
-$searchResults = $spotify->search('Steely Dan', 'artist');
+$searchResults = $client->search('Steely Dan', 'artist');
 
 // Example: Search for albums with additional parameters
-$searchResults = $spotify->search('Aja', 'album', 5, 0, 'US');
+$searchResults = $client->search('Aja', 'album', 5, 0, 'US');
+```
+
+### Get all artist albums
+
+```php
+use Aslamhus\SpotifyClient\Artist\Artist;
+// create Artist object
+$artists = new Artist($client, $artistId);
+// get all albums for artist
+$albums = $artists->getAlbums();
+```
+
+### Get all tracks for an album
+
+Carrying on from the last example, we can now load the tracks any album.
+
+```php
+$tracks = $albums[0]->getTracks();
+```
+
+If you know the album id, you can create the `Album` object without the `Artist` object.
+Note that with all objects like `Album`, `Artist`, and `Track`, you have to get their data or their tracks using the relevant get method.
+
+```php
+use Aslamhus\SpotifyClient\Album\Album;
+$album = new Album($client, '4aawyAB9vmqN3uQ7FjRGTy')
+// get the album data
+$album->getData();
+// get the album tracks
+$album->getTracks();
 ```
 
 ### Error Handling
