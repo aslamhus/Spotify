@@ -5,7 +5,7 @@ namespace Aslamhus\SpotifyClient;
 use GuzzleHttp\Client;
 
 /**
- * Spotify API client v1.0.0
+ * Spotify API client v1.0.1
  *
  * by @aslamhus
  *
