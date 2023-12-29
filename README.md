@@ -58,21 +58,20 @@ Carrying on from the last example, we can now load the tracks any album.
 $tracks = $albums[0]->getTracks();
 ```
 
-If you know the album id, you can create the `Album` object without the `Artist` object.
-Note that with all objects like `Album`, `Artist`, and `Track`, you have to get their data or their tracks using the relevant get method.
+Note that the data for entity objects like `Album`, `Artist`, and `Track` is lazy loaded. You have to explicitly fetch their data with the relevant `get` method.
 
 ```php
 use Aslamhus\SpotifyClient\Album\Album;
 $album = new Album($client, '4aawyAB9vmqN3uQ7FjRGTy')
-// get the album data
+// fetch the album data
 $album->getData();
-// get the album tracks
+// fetch the album tracks
 $album->getTracks();
 ```
 
 ### Error Handling
 
-The class handles HTTP status codes gracefully. If a non-200 status code is received, an exception is thrown with a descriptive error message.
+If a non-200 status code is received, an exception is thrown with a descriptive error message.
 
 ```php
 try {
