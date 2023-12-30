@@ -1,12 +1,15 @@
 <?php
 
-namespace Aslamhus\SpotifyClient;
+namespace Aslamhus\SpotifyClient\Auth;
 
-use Aslamhus\SpotifyClient\Interfaces\AccessTokenInterface;
-use GuzzleHttp\Client;
+use Aslamhus\SpotifyClient\Interfaces\AuthorizationInterface;
+use Aslamhus\SpotifyClient\Exception\AuthorizationException;
+use Aslamhus\SpotifyClient\Auth\AccessToken;
+use Aslamhus\SpotifyClient\Spotify;
+use Aslamhus\SpotifyClient\SpotifyClient;
 
 /**
- * SpotifyUserAccessToken
+ * Authorization Code
  *
  * This class is responsible for getting the user's access token.
  * For Spotify Docs on Auth flow @see https://developer.spotify.com/documentation/web-api/tutorials/code-flow
@@ -14,24 +17,24 @@ use GuzzleHttp\Client;
  * Getting the user's access token has two steps
  *
  */
-class SpotifyUserAccessToken extends SpotifyClient implements \JsonSerializable, AccessTokenInterface
+class AuthorizationCode implements AuthorizationInterface, \JsonSerializable
 {
-    private string $accessToken;
-    private string $tokenType;
-    private int $expiresIn;
-    private string $scope;
+    private AccessToken $accessToken;
+    private SpotifyClient $client;
 
-    public function __construct(string $clientId, string $clientSecret, string $code, string $redirectUri)
+    public function __construct(SpotifyClient $client, string $code, string $redirectUri)
     {
-        parent::__construct($clientId, $clientSecret);
+        $this->client = $client;
         // immediately request access token
         $response = $this->requestAccessToken($code, $redirectUri);
-        // populate properties
-        $this->accessToken = $response['access_token'];
-        $this->tokenType = $response['token_type'];
-        $this->expiresIn = $response['expires_in'];
-        $this->scope = $response['scope'] ?? '';
+        // parse token from response
+        $this->accessToken = new AccessToken($response);
 
+    }
+
+    public function getToken(): AccessToken
+    {
+        return $this->accessToken;
     }
 
     /**
@@ -75,6 +78,7 @@ class SpotifyUserAccessToken extends SpotifyClient implements \JsonSerializable,
      * @param string $code - the code received from the callback uri
      * @param string $redirectUri - the redirect uri used in step 1
      * @return array
+     * @throws AuthorizationException
      */
     private function requestAccessToken(string $code, string $redirectUri): array
     {
@@ -84,61 +88,21 @@ class SpotifyUserAccessToken extends SpotifyClient implements \JsonSerializable,
                 'redirect_uri' => $redirectUri,
                 'grant_type' => 'authorization_code'
             ],
-            "auth" => [$this->clientId, $this->clientSecret],
             "headers" => [
                 'Content-Type' => 'application/x-www-form-urlencoded'
             ],
-            'debug' => true
         ];
-        print_r($options);
-        $response = null;
-        try {
-            $response = $this->client->request('POST', 'https://accounts.spotify.com/api/token', $options);
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
-
-        }
-        $body = $response->getBody()->getContents();
-
-
-        return json_decode($body, true);
+        // client id and secret are added to options in sendAuthorizationRequest
+        return $this->client->sendAuthorizationRequest('https://accounts.spotify.com/api/token', $options);
     }
-
-
-
-    public function getAccessToken(): string
-    {
-        return $this->accessToken;
-    }
-
-    public function getTokenType(): string
-    {
-        return $this->tokenType;
-    }
-
-    public function getExpiresIn(): int
-    {
-        return $this->expiresIn;
-    }
-
-    public function getScope(): string
-    {
-        return $this->scope;
-    }
-
-    public function getClient(): Client
-    {
-        return $this->client;
-    }
-
 
     public function jsonSerialize(): array
     {
-        return [
-            'access_token'  => $this->accessToken,
-            'token_type'    => $this->tokenType,
-            'expires_in'    => $this->expiresIn,
-            'scope'         => $this->scope,
-        ];
+        return $this->accessToken->jsonSerialize();
     }
+
+
+
+
+
 }

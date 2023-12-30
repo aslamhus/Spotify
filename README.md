@@ -14,7 +14,7 @@ composer require aslamhus/spotify-client
 
 ### Authorization
 
-Authorization is required to access different levels of Spotify resources. Choose between `Client Credentials` and `Authorization Code`.
+Authorization is required to access different scopes of Spotify resources. Choose between `Client Credentials` and `Authorization Code`.
 
 #### Client Credentials
 
@@ -24,11 +24,16 @@ For server-to-server authentication you can use Spotify's `Client Credentials` a
 
 ```php
 use Aslamhus\SpotifyClient\Spotify;
-use Aslamhus\SpotifyClient\SpotifyAccessToken;
+use Aslamhus\SpotifyClient\SpotifyClient;
+use Aslamhus\SpotifyClient\Auth\ClientCredentials;
 
-// Initialize the Spotify API client with an access token
-$accessToken = new SpotifyAccessToken('your-client-id', 'your-client-secret');
-$client = new Spotify($accessToken);
+// Initialize the Spotify API client with your client id and secret
+$client = new SpotifyClient('your-client-id', 'your-client-secret');
+// Choose your authorization flow. In this case we use Client Credentials
+$credentials = new ClientCredentials($client);
+// pass the token into a new Spotify class
+$client = new Spotify($credentials->getToken(), $client);
+// You're ready to go!
 ```
 
 #### Authorization Code
@@ -50,8 +55,8 @@ This authorization has a two step process:
    **_Note that the redirect uri must be set in your application's [dashboard](https://developer.spotify.com/dashboard)._**
 
    ```php
-   use Aslamhus\SpotifyClient\SpotifyUserAccessToken;
-   $url = SpotifyUserAccessToken::getAuthorizeUrl('your-client-id', 'http://localhost:8000/callback', 'user-read-private user-read-email');
+   use Aslamhus\SpotifyClient\Auth\AuthorizationCode;
+   $url = AuthorizationCode::getAuthorizeUrl('your-client-id', 'http://localhost:8000/callback', 'user-read-private user-read-email');
 
    ```
 
@@ -69,11 +74,28 @@ This authorization has a two step process:
    **_Note: the redirect uri in the 4th argument must match exactly the redirect uri you specified in your application's dashboard and in the previous step._**
 
    ```php
-   $token = new SpotifyUserAccessToken('your-client-id', 'your-client-secret', $code, 'http://localhost:8000/callback');
+   $client = new SpotifyClient('your-client-id', 'your-client-secret');
+   $credentials = new AuthorizationCode($client, $code, 'http://localhost:8000/callback');
    // instantiate a new Spotify client with user access token
-   $spotify = new Spotify($token);
+   $spotify = new Spotify($credentials->getToken(), $client);
    // you can now access previously restricted resources
    ```
+
+### Stored Token
+
+If you have saved a token to the database, you can create a new `AccessToken` and pass that to `Spotify`.
+
+```php
+use Aslamhus\Spotify\Auth\AccessToken;
+$token = new AccessToken([
+    'access_token' => '',
+    'token_type' => 'Bearer',
+    'expires_in' => 3600,
+    'scope' => 'user-read-email user-read-private'
+]);
+$spotify = new Spotify($token, $client);
+
+```
 
 ### Get Resource
 

@@ -5,30 +5,36 @@ require_once __DIR__ . '/config.php';
 
 use PHPUnit\Framework\TestCase;
 
-use Aslamhus\SpotifyClient\SpotifyAccessToken;
+use Aslamhus\SpotifyClient\Auth\AuthCodeToken;
+use Aslamhus\SpotifyClient\Auth\ClientCredentials;
+use Aslamhus\SpotifyClient\Auth\AuthorizationCode;
+use Aslamhus\SpotifyClient\SpotifyClient;
 use Aslamhus\SpotifyClient\Spotify;
 use Aslamhus\SpotifyClient\Artist\Artist;
 use Aslamhus\SpotifyClient\Album\Album;
-use Aslamhus\SpotifyClient\SpotifyUserAccessToken;
+use Aslamhus\SpotifyClient\Auth\AccessToken;
+use Aslamhus\SpotifyClient\Interfaces\AuthorizationInterface;
 use Aslamhus\SpotifyClient\User\User;
 
 define('REDIRECT_URI', 'http://localhost:3003/logsheet-reader/backend/authorize.php');
 class TestSpotify extends TestCase
 {
-    private SpotifyAccessToken $token;
+    private AuthorizationInterface $clientCredentials;
+    private SpotifyClient $client;
     private Spotify $spotify;
 
     public function __construct()
     {
         parent::__construct();
-        $this->token = new SpotifyAccessToken($_ENV['SPOTIFY_CLIENT_ID'], $_ENV['SPOTIFY_CLIENT_SECRET']);
-        $this->spotify = new Spotify($this->token);
+        $this->client = new SpotifyClient($_ENV['SPOTIFY_CLIENT_ID'], $_ENV['SPOTIFY_CLIENT_SECRET']);
+        $this->clientCredentials = new ClientCredentials($this->client);
+        $this->spotify = new Spotify($this->clientCredentials->getToken(), $this->client);
     }
 
     public function testGetAccessToken()
     {
-        $accessToken = $this->token->getAccessToken();
-        $this->assertNotEmpty($accessToken);
+        $accessToken = $this->clientCredentials->getToken();
+        $this->assertNotEmpty($accessToken->getAccessToken());
     }
 
     public function testGetArtistData()
@@ -92,9 +98,10 @@ class TestSpotify extends TestCase
     public function testGetAuthorizeUrl()
     {
 
-        $url = SpotifyUserAccessToken::getAuthorizeUrl($_ENV['SPOTIFY_CLIENT_ID'], REDIRECT_URI, 'user-read-private user-read-email');
+        $url = AuthorizationCode::getAuthorizeUrl($_ENV['SPOTIFY_CLIENT_ID'], REDIRECT_URI, 'user-read-private user-read-email');
         $this->assertNotEmpty($url);
     }
+
 
 
 
