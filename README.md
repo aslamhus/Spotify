@@ -12,7 +12,15 @@ composer require aslamhus/spotify-client
 
 ## Usage
 
-### Initialization
+### Authorization
+
+Authorization is required to access different levels of Spotify resources. Choose between `Client Credentials` and `Authorization Code`.
+
+#### Client Credentials
+
+For server-to-server authentication you can use Spotify's `Client Credentials` authorization flow. Simply pass your client id and secret to a `SpotifyAccessToken`, then inject the token into a new `Spotify` instance.
+
+**_Note: User information (like playlists) cannot be accessed with these credentials_**
 
 ```php
 use Aslamhus\SpotifyClient\Spotify;
@@ -22,6 +30,50 @@ use Aslamhus\SpotifyClient\SpotifyAccessToken;
 $accessToken = new SpotifyAccessToken('your-client-id', 'your-client-secret');
 $client = new Spotify($accessToken);
 ```
+
+#### Authorization Code
+
+The authorization code flow is suitable for long-running applications (e.g. web and mobile apps) where the user grants permission only once.
+
+By requesting authorization from the user, you can gain access to different scopes of Spotify resources.
+
+Please refer to the Spotify docs for more on the `Authorization Code` flow: [https://developer.spotify.com/documentation/web-api/tutorials/code-flow](https://developer.spotify.com/documentation/web-api/tutorials/code-flow)
+
+This authorization has a two step process:
+
+1. Request user authorization.
+
+   Generate an authorization request url with the static method `getAuthorizeUrl`. Once the user is directed to this url, they will be prompted to give permissions to the scopes you specified. Once they grant permission, they will be redirected to the redirect uri you specified.
+
+   Find a list of Spotify API scopes [here](https://developer.spotify.com/documentation/web-api/concepts/scopes).
+
+   **_Note that the redirect uri must be set in your application's [dashboard](https://developer.spotify.com/dashboard)._**
+
+   ```php
+   use Aslamhus\SpotifyClient\SpotifyUserAccessToken;
+   $url = SpotifyUserAccessToken::getAuthorizeUrl('your-client-id', 'http://localhost:8000/callback', 'user-read-private user-read-email');
+
+   ```
+
+   When the user is redirected to the uri you have specified, save the `code` string from the query parameter.
+
+   ```php
+   // user lands on the redirect uri after successful login
+   $code = $_GET['code'];
+   ```
+
+2. Request access token
+
+   You are now ready to request an access token with the user's granted permissions. With the authorization `code` you received, instantiate a `SpotifyUserAccessToken`.
+
+   **_Note: the redirect uri in the 4th argument must match exactly the redirect uri you specified in your application's dashboard and in the previous step._**
+
+   ```php
+   $token = new SpotifyUserAccessToken('your-client-id', 'your-client-secret', $code, 'http://localhost:8000/callback');
+   // instantiate a new Spotify client with user access token
+   $spotify = new Spotify($token);
+   // you can now access previously restricted resources
+   ```
 
 ### Get Resource
 

@@ -9,7 +9,10 @@ use Aslamhus\SpotifyClient\SpotifyAccessToken;
 use Aslamhus\SpotifyClient\Spotify;
 use Aslamhus\SpotifyClient\Artist\Artist;
 use Aslamhus\SpotifyClient\Album\Album;
+use Aslamhus\SpotifyClient\SpotifyUserAccessToken;
+use Aslamhus\SpotifyClient\User\User;
 
+define('REDIRECT_URI', 'http://localhost:3003/logsheet-reader/backend/authorize.php');
 class TestSpotify extends TestCase
 {
     private SpotifyAccessToken $token;
@@ -85,5 +88,14 @@ class TestSpotify extends TestCase
         $album->getData();
         $this->assertTrue($album->getName() === 'Global Warming');
     }
+
+    public function testGetAuthorizeUrl()
+    {
+
+        $url = SpotifyUserAccessToken::getAuthorizeUrl($_ENV['SPOTIFY_CLIENT_ID'], REDIRECT_URI, 'user-read-private user-read-email');
+        $this->assertNotEmpty($url);
+    }
+
+
 
 }

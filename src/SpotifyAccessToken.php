@@ -2,35 +2,27 @@
 
 namespace Aslamhus\SpotifyClient;
 
+use Aslamhus\SpotifyClient\Interfaces\AccessTokenInterface;
 use GuzzleHttp\Client;
 
-class SpotifyAccessToken implements \JsonSerializable, \IteratorAggregate
+class SpotifyAccessToken extends SpotifyClient implements \JsonSerializable, \IteratorAggregate, AccessTokenInterface
 {
-    private string $clientId;
-    private string $clientSecret;
     private string $accessToken;
     private string $tokenType;
     private int $expiresIn;
     private string $scope;
-    private Client $client;
 
     public function __construct(string $clientId, string $clientSecret)
     {
-        $this->clientId = $clientId;
-        $this->clientSecret = $clientSecret;
-        $this->client = new Client([
-            'base_uri' => 'https://api.spotify.com/v1/',
-            'timeout'  => 2.0,
-        ]);
+        parent::__construct($clientId, $clientSecret);
         // immediately get access token
         $response = $this->requestAccessToken();
+        // populate properties
         $this->accessToken = $response['access_token'];
         $this->tokenType = $response['token_type'];
         $this->expiresIn = $response['expires_in'];
         $this->scope = $response['scope'] ?? '';
     }
-
-
 
 
 

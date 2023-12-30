@@ -2,6 +2,7 @@
 
 namespace Aslamhus\SpotifyClient\Track;
 
+use Aslamhus\SpotifyClient\Interfaces\EntityInterface;
 use Aslamhus\SpotifyClient\Spotify;
 
 /**
@@ -11,7 +12,7 @@ use Aslamhus\SpotifyClient\Spotify;
  *
  * @see https://developer.spotify.com/documentation/web-api/reference/get-track
  */
-class Track extends TrackController implements \JsonSerializable
+class Track extends TrackController implements EntityInterface, \JsonSerializable
 {
     private Spotify $spotify;
     private string $trackId;
@@ -38,7 +39,7 @@ class Track extends TrackController implements \JsonSerializable
         $this->spotify = $spotify;
         $this->trackId = $trackId;
         if(!empty($data)) {
-            $this->parseTrackData($data);
+            $this->setData($data);
         }
     }
 
@@ -122,9 +123,15 @@ class Track extends TrackController implements \JsonSerializable
         return $this->uri;
     }
 
+    public function getData(): self
+    {
+        $response = parent::fetchData($this->trackId);
+        $this->setData($response);
+        return $this;
+    }
 
 
-    private function parseTrackData(array $data): void
+    public function setData(array $data): void
     {
 
         $this->trackId = $data['id'];

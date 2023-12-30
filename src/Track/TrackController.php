@@ -2,6 +2,7 @@
 
 namespace Aslamhus\SpotifyClient\Track;
 
+use Aslamhus\SpotifyClient\Interfaces\EntityControllerInterface;
 use Aslamhus\SpotifyClient\Spotify;
 use Aslamhus\SpotifyClient\Track\Track;
 
@@ -11,7 +12,7 @@ use Aslamhus\SpotifyClient\Track\Track;
  * TODO: configure this class to fetch track data from Spotify API
  *
  */
-class TrackController
+class TrackController implements EntityControllerInterface
 {
     private Spotify $spotify;
 
@@ -20,21 +21,11 @@ class TrackController
         $this->spotify = $spotify;
     }
 
-    protected function fetchTrackData(string $albumId): ?array
+    public function fetchData(string $trackId = ''): array
     {
-        $response =  $this->spotify->get('https://api.spotify.com/v1/tracks/' . $albumId . '/tracks');
-        // parse response into array of track objects
-        return $this->parseTracksResponse($response);
+        return  $this->spotify->get('https://api.spotify.com/v1/tracks/' . $trackId);
     }
 
-    private function parseTracksResponse(array $response): array
-    {
-        $tracks = [];
-        foreach($response['items'] as $track) {
-            $tracks[] = new Track($this->spotify, $track['id'], $track);
-        }
-        return $tracks;
-    }
 
 
 
