@@ -69,14 +69,14 @@ This authorization has a two step process:
 
 2. Request access token
 
-   You are now ready to request an access token with the user's granted permissions. With the authorization `code` you received, instantiate a `SpotifyUserAccessToken`.
+   You are now ready to request an access token with the user's granted permissions. Create a new `AuthorizationCode` credentials object with the code and redirect uri from the previous step. This will generate an access token with the appropriate permissions.
 
-   **_Note: the redirect uri in the 4th argument must match exactly the redirect uri you specified in your application's dashboard and in the previous step._**
+   **_Note: the redirect uri passed to AuthorizationCode must match exactly the redirect uri you specified in your application's dashboard and in the previous step._**
 
    ```php
    $client = new SpotifyClient('your-client-id', 'your-client-secret');
    $credentials = new AuthorizationCode($client, $code, 'http://localhost:8000/callback');
-   // instantiate a new Spotify client with user access token
+   // pass the token and client to the Spotify class
    $spotify = new Spotify($credentials->getToken(), $client);
    // you can now access previously restricted resources
    ```
@@ -92,6 +92,7 @@ $token = new AccessToken([
     'token_type' => 'Bearer',
     'expires_in' => 3600,
     'scope' => 'user-read-email user-read-private'
+    'refresh_token' => ''
 ]);
 $spotify = new Spotify($token, $client);
 
