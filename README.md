@@ -105,17 +105,17 @@ Spotify tokens are intentionally set to expire after 1 hour. If you have used th
 
 ```php
 // Example: Get artist information
-$artistData = $client->get('https://api.spotify.com/v1/artists/3WrFJ7ztbogyGnTHbHJFl2');
+$artistData = $spotify->get('https://api.spotify.com/v1/artists/3WrFJ7ztbogyGnTHbHJFl2');
 ```
 
 ### Search
 
 ```php
 // Example: Search for artists with a query
-$searchResults = $client->search('Steely Dan', 'artist');
+$searchResults = $spotify->search('Steely Dan', 'artist');
 
 // Example: Search for albums with additional parameters
-$searchResults = $client->search('Aja', 'album', 5, 0, 'US');
+$searchResults = $spotify->search('Aja', 'album', 5, 0, 'US');
 ```
 
 ### Get all artist albums
@@ -123,7 +123,7 @@ $searchResults = $client->search('Aja', 'album', 5, 0, 'US');
 ```php
 use Aslamhus\SpotifyClient\Artist\Artist;
 // create Artist object
-$artists = new Artist($client, $artistId);
+$artists = new Artist($spotify, $artistId);
 // get all albums for artist
 $albums = $artists->getAlbums();
 ```
@@ -140,7 +140,7 @@ Note that the data for entity objects like `Album`, `Artist`, and `Track` is laz
 
 ```php
 use Aslamhus\SpotifyClient\Album\Album;
-$album = new Album($client, '4aawyAB9vmqN3uQ7FjRGTy')
+$album = new Album($spotify, '4aawyAB9vmqN3uQ7FjRGTy')
 // fetch the album data
 $album->getData();
 // fetch the album tracks
