@@ -18,7 +18,7 @@ Authorization is required to access different scopes of Spotify resources. Choos
 
 #### Client Credentials
 
-For server-to-server authentication you can use Spotify's `Client Credentials` authorization flow. Simply pass your client id and secret to a `SpotifyAccessToken`, then inject the token into a new `Spotify` instance.
+For server-to-server authentication you can use Spotify's `Client Credentials` authorization flow. Simply pass your client id and secret to a `SpotifyAccessToken`, then inject the token into a new `Spotify` instance. The client id and secret can be found in your Spotify Dashboard. For security, it is recommended to store your client id and secret in environment variables.
 
 **_Note: User information (like playlists) cannot be accessed with these credentials_**
 
