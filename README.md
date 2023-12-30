@@ -95,8 +95,11 @@ $token = new AccessToken([
     'refresh_token' => ''
 ]);
 $spotify = new Spotify($token, $client);
-
 ```
+
+### Token expiration and refresh tokens
+
+Spotify tokens are intentionally set to expire after 1 hour. If you have used the `AuthorizationCode` credentials, your token comes with a refresh token. `Aslamhus\Spotify` will automatically handle refreshing your token when you make a request.
 
 ### Get Resource
 

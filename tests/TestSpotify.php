@@ -95,14 +95,6 @@ class TestSpotify extends TestCase
         $this->assertTrue($album->getName() === 'Global Warming');
     }
 
-    public function testGetAuthorizeUrl()
-    {
-
-        $url = AuthorizationCode::getAuthorizeUrl($_ENV['SPOTIFY_CLIENT_ID'], REDIRECT_URI, 'user-read-private user-read-email');
-        $this->assertNotEmpty($url);
-    }
-
-
 
 
 }

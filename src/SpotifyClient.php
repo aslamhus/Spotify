@@ -2,9 +2,11 @@
 
 namespace Aslamhus\SpotifyClient;
 
-use GuzzleHttp\Client;
-use Aslamhus\SpotifyClient\Exception\AuthorizationException;
+use Aslamhus\SpotifyClient\Auth\AccessToken;
+use Aslamhus\SpotifyClient\Exception\SpotifyRequestException;
+use Aslamhus\SpotifyClient\Exception\SpotifyAccessExpiredException;
 use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Client;
 
 class SpotifyClient
 {
@@ -25,9 +27,54 @@ class SpotifyClient
 
     }
 
-    public function request(string $method, $uri = '', array $options = []): ResponseInterface
+    /**
+     * Request
+     *
+     * All Spotify API requests go through this method
+     *
+     * @param string $method
+     * @param string $uri
+     * @param array [$options]
+     * @param AccessToken $token
+     * @return ResponseInterface
+     */
+    public function request(string $method, $uri, array $options = [], AccessToken $token = null): ResponseInterface
     {
-        return $this->client->request($method, $uri, $options);
+        $request = null;
+        // add authorization header if access token is set
+        if($token !== null) {
+            $options = [...$options, 'headers' => ['Authorization' => 'Bearer ' . $token->getAccessToken()]];
+        }
+        // make the request
+        try {
+            $request = $this->client->request($method, $uri, $options);
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            // throw granular exception about the request
+            throw $this->handleRequestExceptions($e);
+        }
+
+        return $request;
+
+    }
+
+
+    private function handleRequestExceptions(\GuzzleHttp\Exception\ClientException $e)
+    {
+        $exception = new SpotifyRequestException($e->getMessage(), $e->getResponse());
+        // get status code and error
+        $statusCode = $exception->getStatusCode();
+        $body = $exception->getBody();
+        // handle specific errors
+        if(
+            $statusCode === 401 &&
+            isset($body['error']) &&
+            $body['error']['message'] === 'The access token expired'
+        ) {
+
+            return new SpotifyAccessExpiredException('The access token expired');
+        }
+        // throw default spotify request exception
+        return $exception;
     }
 
     /**
@@ -47,11 +94,27 @@ class SpotifyClient
             $options = [...$options, "auth" => [$this->clientId, $this->clientSecret]];
             $response = $this->request('POST', $endpoint, $options);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
-            throw new AuthorizationException($e->getMessage(), $e->getResponse());
+            throw new SpotifyRequestException($e->getMessage(), $e->getResponse());
 
         }
         $body = $response->getBody()->getContents();
         return json_decode($body, true);
+    }
+
+    public function refreshToken(string $refreshToken): ?AccessToken
+    {
+        $options = [
+            'form_params' => [
+                'grant_type' => 'refresh_token',
+                'refresh_token' => $refreshToken,
+            ],
+        ];
+        $response = $this->sendAuthorizationRequest('https://accounts.spotify.com/api/token', $options);
+        // if access token is set, return new access token
+        if(isset($response['access_token'])) {
+            return new AccessToken($response);
+        }
+        return null;
     }
 
     public function getClient(): Client

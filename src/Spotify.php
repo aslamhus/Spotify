@@ -3,7 +3,10 @@
 namespace Aslamhus\SpotifyClient;
 
 use Aslamhus\SpotifyClient\Auth\AccessToken;
+use Aslamhus\SpotifyClient\Exception\SpotifyAccessExpiredException;
 use Aslamhus\SpotifyClient\SpotifyClient;
+use Aslamhus\SpotifyClient\Exception\SpotifyRequestException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Spotify API client v1.1.0
@@ -89,19 +92,19 @@ class Spotify
      * @param string $type - the request type, i.e. 'GET', 'POST', etc.
      * @param string $url - the endpoint url
      * @param array $options - options for GuzzleHttp\Client
+     * @throws SpotifyRequestException
      *
      * @return array|null
      */
     private function request(string $type, string $url, array $options = []): ?array
     {
-        // set Authorization header and options
-        $options = array_merge([
-            'headers'   => [
-                'Authorization' => 'Bearer ' . $this->accessToken->getAccessToken()
-            ],
-        ], $options);
+
         // make the request
-        $response = $this->client->request($type, $url, $options);
+        try {
+            $response = $this->client->request($type, $url, $options, $this->accessToken);
+        } catch(SpotifyAccessExpiredException $e) {
+            $response = $this->handleAccessTokenExpired($type, $url, $options);
+        }
         // get the status
         $status = $response->getStatusCode();
         // if status is not 200, throw exception
@@ -111,6 +114,30 @@ class Spotify
         // parse response and decode
         $body = $response->getBody()->getContents();
         return json_decode($body, true);
+    }
+
+
+    /**
+     * Handle expired access token
+     *
+     * @param string $type - the request type, i.e. 'GET', 'POST', etc.
+     * @param string $url - the endpoint url
+     * @param array $options - options for GuzzleHttp\Client
+     * @throws SpotifyRequestException
+     *
+     * @return array|null
+     */
+    private function handleAccessTokenExpired(string $type, string $url, array $options = []): ResponseInterface
+    {
+        // try to refresh token
+        $refreshToken =  $this->client->refreshToken($this->accessToken->getRefreshToken());
+        if($refreshToken !== null) {
+            // if refresh token succeeds, set new access token and try request again
+            $this->accessToken = $refreshToken;
+            return $this->client->request($type, $url, $options, $this->accessToken);
+        }
+        throw new SpotifyRequestException('Error refreshing access token');
+
     }
 
     /**
