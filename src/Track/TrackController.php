@@ -23,7 +23,7 @@ class TrackController implements EntityControllerInterface
 
     public function fetchData(string $trackId = ''): array
     {
-        return  $this->spotify->get('https://api.spotify.com/v1/tracks/' . $trackId);
+        return  $this->spotify->get("tracks/$trackId");
     }
 
 

@@ -59,6 +59,7 @@ class Spotify
     private AccessToken $accessToken;
     private SpotifyClient $client;
 
+
     public function __construct(AccessToken $token, SpotifyClient $client)
     {
         $this->accessToken = $token;
@@ -66,23 +67,95 @@ class Spotify
     }
 
 
+
+
     /**
-     * Get resource from Spotify API
+     * Convenience method to Get resource from Spotify API
      *
      * @param string $url
      * @param array [$query] - optional query parameters, i.e. ['market' => 'US']
+     * @param array [$headers] - optional headers to send with the request
+     * @param string [$key] - the key to use for the data, i.e. 'json', 'form_params', etc.
      *
      * @return array|null
      */
-    public function get(string $url, array $query = []): ?array
+    public function get(string $url, array $query = [], ?array $headers = null, string $key = 'query'): ?array
+    {
+        return $this->performRequest('GET', $url, $key, $query, $headers);
+    }
+
+
+    /**
+     * Convenience method to Post resource to Spotify API
+     *
+     * @param string $url
+     * @param mixed $data - the data to post
+     * @param array [$headers] - optional headers to send with the request
+     *
+     * @return array|null
+     */
+    public function post(string $url, mixed $data, ?array $headers = null, string $key = 'json'): ?array
+    {
+        return $this->performRequest('POST', $url, $key, $data, $headers);
+    }
+
+
+    /**
+     * Convenience method to Put resource to Spotify API
+     *
+     * @param string $url
+     * @param mixed $data - the data to put
+     * @param array [$headers] - optional headers to send with the request
+     * @param string [$key] - the key to use for the data, i.e. 'json', 'form_params', etc.
+     * @return array|null
+     */
+    public function put(string $url, mixed $data, ?array $headers = null, string $key = 'json'): ?array
+    {
+        return $this->performRequest('PUT', $url, $key, $data, $headers);
+    }
+
+
+    /**
+     * Convenience method to Delete resource from Spotify API
+     *
+     * @param string $url
+     * @param mixed $data
+     * @param array [$headers] - optional headers to send with the request
+     * @param string [$key] - the key to use for the data, i.e. 'json', 'form_params', etc.
+     * @return array|null
+     */
+    public function delete(string $url, mixed $data, ?array $headers = null, string $key = 'json'): ?array
+    {
+        return $this->performRequest('DELETE', $url, $key, $data, $headers);
+    }
+
+    /**
+     * Perform request with data
+     *
+     * Prepares the request with the data and performs the request
+     *
+     * @param string $method - the request method, i.e. 'POST', 'PUT', etc.
+     * @param string $url - the endpoint url
+     * @param string $key - the key to use for the data, i.e. 'json', 'form_params', etc.
+     * @param mixed $data - the data to post. In the case of 'json', this is an array that will be json encoded.
+     * @param ?array $headers - optional headers to send with the request
+     *
+     * @return ?array
+     */
+    private function performRequest(string $method, string $url, string $key, $data = null, $headers = null): ?array
     {
         $options = [];
-        // conditionally set query parameters
-        if(!empty($query)) {
-            $options['query'] = $query;
+        // conditionally set d post data
+        if(!empty($data)) {
+            $options[$key] = $data;
+            $options['headers'] = $headers ??  ['Content-Type' => 'application/json'];
         }
-        return $this->request('GET', $url, $options);
+        return $this->request($method, $url, $options);
     }
+
+
+
+
 
     /**
      * Request a resource to Spotify API
@@ -100,6 +173,7 @@ class Spotify
     {
 
         // make the request
+        echo json_encode($options, JSON_PRETTY_PRINT);
         try {
             $response = $this->client->request($type, $url, $options, $this->accessToken);
         } catch(SpotifyAccessExpiredException $e) {
@@ -108,8 +182,8 @@ class Spotify
         // get the status
         $status = $response->getStatusCode();
         // if status is not 200, throw exception
-        if($status !== 200) {
-            throw new \Exception('Error getting artist data, http status code: ' . $status);
+        if($status !== 200 && $status !== 201 && $status !== 202) {
+            throw new SpotifyRequestException('Error getting data, http status code: ' . $status);
         }
         // parse response and decode
         $body = $response->getBody()->getContents();
@@ -158,7 +232,7 @@ class Spotify
      */
     public function search(string $query, string $types, int $limit = 5, int $offset = 0, string $market = ''): ?array
     {
-        $url = 'https://api.spotify.com/v1/search';
+        $url = '/search';
         $query = [
             'q'         => $query,
             'type'      => $types,

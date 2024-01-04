@@ -12,7 +12,7 @@ class SpotifyRequestException extends \Exception
         // if response set, parse status code, body, error, and error description
         if($response) {
             $this->statusCode = $response->getStatusCode();
-            $this->body = json_decode($response->getBody(), true);
+            $this->body = json_decode($response->getBody(), true) ?? [];
         }
 
         $message = "Spotify request error: " . $message;

@@ -16,7 +16,7 @@ class UserController implements EntityControllerInterface
 
     public function fetchData(): array
     {
-        return $this->spotify->get('https://api.spotify.com/v1/me');
+        return $this->spotify->get('me');
     }
 
 }

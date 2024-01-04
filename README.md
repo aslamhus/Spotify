@@ -105,7 +105,7 @@ Spotify tokens are intentionally set to expire after 1 hour. If you have used th
 
 ```php
 // Example: Get artist information
-$artistData = $spotify->get('https://api.spotify.com/v1/artists/3WrFJ7ztbogyGnTHbHJFl2');
+$artistData = $spotify->get('artists/3WrFJ7ztbogyGnTHbHJFl2');
 ```
 
 ### Search
@@ -147,13 +147,85 @@ $album->getData();
 $album->getTracks();
 ```
 
+## Playlist
+
+### Get Playlist
+
+**_IMPORTANT: Working with Playlist or User entities requires the AuthorizationCode credentials_**
+
+This example assumes you know the id of the playlist.
+
+```php
+$spotify = new Spotify($token, $client);
+$user = new User($spotify);
+$playlist = new Playlist($spotify, $user, ['id' => 'my-playlist-id-string']);
+$playlist->getData();
+// all entities are json serializable
+echo json_encode($playlist);
+```
+
+### Add Tracks
+
+In order to add a track to a playlist you must use its track id. If you have previously loaded a Track or Tracks object, you can simply add those.
+
+#### Adding a single track
+
+```php
+$track = new Track()
+$track = new Track($spotify, '5xxumuSMspEXt19CGfeiD2');
+$playlist->addTrack([$track]);
+```
+
+#### Adding a track to a specific index in the playlist
+
+```php
+$track = new Track()
+$track = new Track($spotify, '5xxumuSMspEXt19CGfeiD2');
+$playlist->addTrack([$track], 3);
+```
+
+#### Adding multiple tracks
+
+```php
+$tracks = new Tracks([]);
+$ids = ['5xxumuSMspEXt19CGfeiD2','6rqhFgbbKwnb9MLmUQDhG6'];
+foreach($ids as $id){
+    $tracks->addTrack(new Track($spotify, $id));
+}
+$playlist->addTracks($tracks);
+```
+
+### Remove Tracks
+
+```php
+$tracksToDelete = $playlist->tracks->findTracksByName('Lazy Day');
+// returns null if no tracks found
+if($trackToDelete) {
+    $playlist->removeTracks($tracksToDelete);
+}
+```
+
+### Remove Tracks across a range
+
+### Create a new playlist
+
+The static method `create` playlist returns a new instance of the `Playlist` entity, which you can then add tracks to.
+
+```php
+$playlist = Playlist::create($spotify, $user, [
+    'name' => 'My Playlist', // required
+    'description' => 'My description' // default ''
+    'public' => true // default is false
+])
+```
+
 ### Error Handling
 
 If a non-200 status code is received, an exception is thrown with a descriptive error message.
 
 ```php
 try {
-    $artistData = $spotify->get('https://api.spotify.com/v1/artists/invalid-id');
+    $artistData = $spotify->get('artists/invalid-id');
 } catch (\Exception $e) {
     echo 'Error: ' . $e->getMessage();
 }

@@ -15,37 +15,40 @@ use Aslamhus\SpotifyClient\Spotify;
 class Track extends TrackController implements EntityInterface, \JsonSerializable
 {
     private Spotify $spotify;
-    private string $trackId;
-    private array $artists = [];
-    private array $available_markets = [];
-    private int $disc_number = 0;
-    private int $duration_ms = 0;
-    private bool $explicit = false;
-    private array $external_ids = [];
-    private array $external_urls = [];
-    private string $href = '';
-    private bool $is_local = false;
-    private string $name = '';
-    private int $popularity = 0;
-    private string $preview_url = '';
-    private int $track_number = 0;
-    private string $type = '';
-    private string $uri = '';
+    public string $id;
+    public array $artists = [];
+    public array $available_markets = [];
+    public int $disc_number = 0;
+    public int $duration_ms = 0;
+    public bool $explicit = false;
+    public array $external_ids = [];
+    public array $external_urls = [];
+    public string $href = '';
+    public bool $is_local = false;
+    public string $name = '';
+    public int $popularity = 0;
+    public string $preview_url = '';
+    public int $track_number = 0;
+    public string $type = '';
+    public string $uri = '';
 
 
-    public function __construct(Spotify $spotify, string $trackId, array $data = [])
+    public function __construct(Spotify $spotify, string $id, array $data = [])
     {
         parent::__construct($spotify);
         $this->spotify = $spotify;
-        $this->trackId = $trackId;
+        $this->id = $id;
         if(!empty($data)) {
             $this->setData($data);
+        } else {
+            // set uri manually from track id
+            $this->uri = "spotify:track:$id";
         }
     }
 
-    public function getTrackId(): string
+    public function getId(): string
     {
-        return $this->trackId;
+        return $this->id;
     }
 
     public function getArtists(): array
@@ -125,7 +128,7 @@ class Track extends TrackController implements EntityInterface, \JsonSerializabl
 
     public function getData(): self
     {
-        $response = parent::fetchData($this->trackId);
+        $response = parent::fetchData($this->id);
         $this->setData($response);
         return $this;
     }
@@ -134,7 +137,7 @@ class Track extends TrackController implements EntityInterface, \JsonSerializabl
     public function setData(array $data): void
     {
 
-        $this->trackId = $data['id'];
+        $this->id = $data['id'];
         $this->artists = $data['artists'] ?? [];
         $this->available_markets = $data['available_markets'] ?? [];
         $this->disc_number = $data['disc_number'] ?? 0;
@@ -157,7 +160,7 @@ class Track extends TrackController implements EntityInterface, \JsonSerializabl
     public function jsonSerialize(): array
     {
         return [
-            'trackId' => $this->trackId,
+            'id' => $this->id,
             'artists' => $this->artists,
             'available_markets' => $this->available_markets,
             'disc_number' => $this->disc_number,

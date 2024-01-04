@@ -13,15 +13,15 @@ class SpotifyClient
     protected string $clientId;
     protected string $clientSecret;
     protected Client $client;
+    public const ENDPOINT = 'https://api.spotify.com/v1/';
 
-    public function __construct(string $clientId, string $clientSecret)
+    public function __construct(string $clientId, string $clientSecret, $endpoint = self::ENDPOINT)
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-
         // set the guzzle client to use for requests
         $this->client = new Client([
-            'base_uri' => 'https://api.spotify.com/v1/',
+            'base_uri' => $endpoint,
             'timeout'  => 2.0,
         ]);
 
@@ -65,13 +65,27 @@ class SpotifyClient
         $statusCode = $exception->getStatusCode();
         $body = $exception->getBody();
         // handle specific errors
-        if(
-            $statusCode === 401 &&
-            isset($body['error']) &&
-            $body['error']['message'] === 'The access token expired'
-        ) {
+        switch($statusCode) {
+            case 400:
+                // {
+                //     "error" : {
+                //       "status" : 400,
+                //       "message" : "Error parsing JSON."
+                //     }
+                //   }
+                break;
+            case 401:
+                if(isset($body['error']) &&  $body['error']['message'] === 'The access token expired') {
+                    return new SpotifyAccessExpiredException('The access token expired');
+                }
+                break;
 
-            return new SpotifyAccessExpiredException('The access token expired');
+            case 403:
+                if(isset($body['error']) &&  $body['error']['message'] === 'Insufficient client scope') {
+                    return new SpotifyRequestException('Insufficient client scope');
+                }
+                break;
+
         }
         // throw default spotify request exception
         return $exception;

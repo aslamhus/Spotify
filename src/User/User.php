@@ -40,6 +40,11 @@ class User extends UserController implements EntityInterface, \JsonSerializable
         }
     }
 
+    public function getId(): string
+    {
+        return $this->userId;
+    }
+
     public function getData(): self
     {
         $data = parent::fetchData();

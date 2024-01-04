@@ -4,3 +4,4 @@
 - add error handling to api fetches
 - playlist builder
 - add rate limiting (see https://developer.spotify.com/documentation/web-api/concepts/rate-limits)
+- finish reorder tracks logic

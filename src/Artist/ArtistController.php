@@ -19,17 +19,17 @@ class ArtistController
 
     protected function fetchData(string $artistId): ?array
     {
-        return $this->spotify->get('https://api.spotify.com/v1/artists/' . $artistId);
+        return $this->spotify->get("artists/$artistId");
     }
 
     protected function fetchTracks(string $artistId, string $albumId): ?array
     {
-        return $this->spotify->get('https://api.spotify.com/v1/albums/' . $artistId . '/tracks');
+        return $this->spotify->get("albums/$artistId/tracks");
     }
 
     protected function fetchAlbums(string $artistId): ?array
     {
-        $response =  $this->spotify->get('https://api.spotify.com/v1/artists/' . $artistId . '/albums');
+        $response =  $this->spotify->get("artists/$artistId/albums");
         // parse response into array of Album objects
         return $this->parseAlbumsResponse($response);
 
