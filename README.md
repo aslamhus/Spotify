@@ -166,7 +166,7 @@ echo json_encode($playlist);
 
 ### Create a new playlist
 
-The static method `create` playlist returns a new instance of the `Playlist` entity, which you can then add tracks to.
+The static method `create` is a factory function which returns a new instance of the `Playlist` entity.
 
 ```php
 $playlist = Playlist::create($spotify, $user, [
@@ -178,12 +178,11 @@ $playlist = Playlist::create($spotify, $user, [
 
 ### Add Tracks
 
-In order to add a track to a playlist you must use its track id. If you have previously loaded a Track or Tracks object, you can simply add those.
+In order to add a track to a playlist you must know its track id. If you have previously loaded a Track or Tracks object with an id associated with it, you can simply add those.
 
 #### Adding a single track
 
 ```php
-$track = new Track()
 $track = new Track($spotify, '5xxumuSMspEXt19CGfeiD2');
 $playlist->addTrack([$track]);
 ```
@@ -191,7 +190,6 @@ $playlist->addTrack([$track]);
 #### Adding a track to a specific index in the playlist
 
 ```php
-$track = new Track()
 $track = new Track($spotify, '5xxumuSMspEXt19CGfeiD2');
 $playlist->addTrack([$track], 3);
 ```
