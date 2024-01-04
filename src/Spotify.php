@@ -173,7 +173,6 @@ class Spotify
     {
 
         // make the request
-        echo json_encode($options, JSON_PRETTY_PRINT);
         try {
             $response = $this->client->request($type, $url, $options, $this->accessToken);
         } catch(SpotifyAccessExpiredException $e) {
