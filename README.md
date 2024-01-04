@@ -164,6 +164,18 @@ $playlist->getData();
 echo json_encode($playlist);
 ```
 
+### Create a new playlist
+
+The static method `create` playlist returns a new instance of the `Playlist` entity, which you can then add tracks to.
+
+```php
+$playlist = Playlist::create($spotify, $user, [
+    'name' => 'My Playlist', // required
+    'description' => 'My description' // default ''
+    'public' => true // default is false
+])
+```
+
 ### Add Tracks
 
 In order to add a track to a playlist you must use its track id. If you have previously loaded a Track or Tracks object, you can simply add those.
@@ -205,18 +217,33 @@ if($trackToDelete) {
 }
 ```
 
-### Remove Tracks across a range
-
-### Create a new playlist
-
-The static method `create` playlist returns a new instance of the `Playlist` entity, which you can then add tracks to.
+### Additional playlist methods
 
 ```php
-$playlist = Playlist::create($spotify, $user, [
-    'name' => 'My Playlist', // required
-    'description' => 'My description' // default ''
-    'public' => true // default is false
-])
+// Get playlist details
+$details = $playlist->getDetails();
+
+// Get playlist cover image
+$coverImage = $playlist->getCoverImage();
+
+// Update playlist details
+$updateOptions = [
+    'name' => 'Updated Playlist Name',
+    'description' => 'Updated playlist description',
+    'public' => false,
+];
+$playlist->changeDetails($updateOptions);
+
+// Update playlist cover image
+$filePath = "/path/to/my/file.jpg";
+$playlist->updateCoverImage($filePath);
+
+// Reorder playlist tracks
+$playlist->reorderTracks(2, 0);
+
+// Replace playlist tracks
+$newTracks = new Tracks([new Track('new-track-uri-1'), new Track('new-track-uri-2')]);
+$playlist->replaceTracks($newTracks);
 ```
 
 ### Error Handling
