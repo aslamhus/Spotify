@@ -232,7 +232,7 @@ class Spotify
      */
     public function search(string $query, string $types, int $limit = 5, int $offset = 0, string $market = ''): ?array
     {
-        $url = '/search';
+        $url = 'search';
         $query = [
             'q'         => $query,
             'type'      => $types,

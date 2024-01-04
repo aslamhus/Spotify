@@ -31,13 +31,13 @@ class TestSpotify extends TestCase
         $this->clientCredentials = new ClientCredentials($this->client);
         $this->spotify = new Spotify($this->clientCredentials->getToken(), $this->client);
         $this->refreshableToken =   new AccessToken([
-                    "access_token" => "BQAjVXVqGlNouqgI48iBP1yD5EzzMRjDu6vSCjgZ7Hoq-MkG2yHJl7jZ5YVV4-6eio1GobOyTlwSHdzAoHih0OeHCf8q6zRxlC1eIZ9fVQdWsyz4l_NA9gR3rhBjhHstLYs6dUN_R-zmAj_pTn2VdGyHaoWQ4PQSTL7khoR4OAp-rAwzlqX7Fnh_Ami-6BNvj_ZPqh70W0JwC7l40cJ_OCyEM-ygWETE73qwJoyN4KXGckWmMe4w4ix8H8f6Dc30S9pM7Jjr21Y28FSwjh__y2C8kPdvFQ",
-                    "token_type" => "Bearer",
-                    "expires_in" => 3600,
-                    "scope" => "playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-read-email user-read-private",
-                    "refresh_token" => "AQC5s1UbnnsPJl8oWV9fVm12ucgDPNH8m3ny9jKN1kVOcQrJpsmuYKkivBQd17_NozaOKILpIqm2e0xSfj7PXcbQDsgmJE5r-nR5AFm_pE9OuLkerbNYMGCNNCQEAxNZ0MA"
+            "access_token" => "BQCcroMuU4jLgxEEPqAwfdw36RuTi0aOm_t6Uhm_AW_F_csv7umypB4O2IWo9_Z5RTByMKP5UrDx-fWo_zQlp2FFOpCNqqSicIAIzZd5stqqg2gi7ED_JN6yHk7sgz1pqWzUVm3ISLg2jN6KeTyDF_cmegT3ycXzgokQgGmCAtb98xdmYZ_cBgKtGI7ywdtTa5PxKKymR5Ezc-fRLXL3zUVcBMZCJGBffi9wmT74ElT7TCrvUocROnYOL26jBbBpORekfpXSnqhWVi7EQbwI_6m9dwrf-Jto",
+            "token_type" => "Bearer",
+            "expires_in" => 3600,
+            "scope" => "playlist-read-private playlist-read-collaborative ugc-image-upload playlist-modify-private playlist-modify-public user-read-email user-read-private",
+            "refresh_token" => "AQB_Rvfmm-ahUwh8WLkucD3bRxMGdgYMBNQc46fRaB6ik9qKOBqC10ByzZ2a8nKlAxNr2R2sRNORVXVmUbYe4HLG5qzo5HeSEY7eyCyALkfejCeIa7Q3q3ZmpJ4jRpsOLh0"
 
-                ]);
+        ]);
     }
 
     // public function testGetAccessToken()
@@ -52,11 +52,12 @@ class TestSpotify extends TestCase
     //     $this->assertNotEmpty($artistData);
     // }
 
-    // public function testSearchArtist()
-    // {
-    //     $artistData = $this->spotify->search('Steely Dan', 'artist');
-    //     $this->assertNotEmpty($artistData);
-    // }
+    public function testSearchArtist()
+    {
+        $artistData = $this->spotify->search('Steely Dan', 'artist');
+        var_dump($artistData);
+        $this->assertNotEmpty($artistData);
+    }
 
     // public function testGetArtistTracks()
     // {
