@@ -207,4 +207,15 @@ class PlaylistController implements EntityControllerInterface
         return $this->spotify->put("playlists/$playlistId/tracks$queryString", $data);
     }
 
+    /**
+     * Unfollow playlist (remove from user's library)
+     *
+     * @param string $playlistId
+     * @return array|null
+     */
+    protected function unfollowPlaylist(string $playlistId): ?array
+    {
+        return $this->spotify->delete("playlists/$playlistId/followers", []);
+    }
+
 }

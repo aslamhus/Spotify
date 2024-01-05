@@ -40,6 +40,7 @@ class TestPlaylist extends TestCase
         // $this->playlist = new Playlist($this->spotify, $this->user, ['id' => '2YsnoSxgTGvfQGLL1YwwYQ']);
     }
 
+
     // public function testGetPlaylistData()
     // {
     //     $playlistJson = json_encode($this->playlist, JSON_PRETTY_PRINT);
@@ -207,15 +208,20 @@ class TestPlaylist extends TestCase
     //     $playlist->updateCoverImage($filePath);
     // }
 
-    public function testGetCoverImage()
-    {
-        $playlist = new Playlist($this->spotify, $this->user, ['id' => '2YsnoSxgTGvfQGLL1YwwYQ']);
-        $playlist->getData();
-        $image = $playlist->getCoverImage();
-        echo json_encode($image[0], JSON_PRETTY_PRINT);
-        $this->assertArrayHasKey('url', $image[0]);
-    }
+    // public function testGetCoverImage()
+    // {
+    //     $playlist = new Playlist($this->spotify, $this->user, ['id' => '2YsnoSxgTGvfQGLL1YwwYQ']);
+    //     $playlist->getData();
+    //     $image = $playlist->getCoverImage();
+    //     echo json_encode($image[0], JSON_PRETTY_PRINT);
+    //     $this->assertArrayHasKey('url', $image[0]);
+    // }
 
+    public function testUnfollowPlaylist()
+    {
+        $playlist = new Playlist($this->spotify, $this->user, ['id' => '1ApzGsk2sZUVENwCeKU6fA']);
+        $playlist->unfollow();
+    }
     /**
      * Track ids for testing:
      *

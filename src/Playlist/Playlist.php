@@ -390,6 +390,31 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
     }
 
     /**
+     * Unfollow playlist
+     *
+     * The closest to a "delete" method for a playlist.
+     *
+     * Note on deleting playlists from the Spotify API docs:
+     * "We have no endpoint for deleting a playlist in the Web API;
+     * the notion of deleting a playlist is not relevant within the Spotify’s playlist system.
+     * Even if you are the playlist’s owner and you choose to manually remove it from your own
+     * list of playlists, you are simply unfollowing it. Although this behavior may sound strange,
+     * it means that other users who are already following the playlist can keep enjoying it.
+     * Manually restoring a deleted playlist through the Spotify Accounts Service is the same
+     * thing as following one of your own playlists that you have previously unfollowed.
+     * @see https://developer.spotify.com/documentation/web-api/concepts/playlists
+     *
+     *
+     * For api documentation @see https://developer.spotify.com/documentation/web-api/reference/unfollow-playlist
+     *
+     * @return null - the response from the Spotify API (empty)
+     */
+    public function unfollow(): ?array
+    {
+        return parent::unfollowPlaylist($this->id);
+    }
+
+    /**
      * Check tracks exist
      *
      * @return bool
@@ -401,6 +426,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
         }
         return true;
     }
+
 
 
 
