@@ -24,6 +24,8 @@
   "scripts": {
     "test": "./vendor/bin/phpunit /Applications/MAMP/htdocs/local_folder/@aslamhus/php/Spotify/tests/TestSpotify.php",
     "test-playlist": "./vendor/bin/phpunit /Applications/MAMP/htdocs/local_folder/@aslamhus/php/Spotify/tests/TestPlaylist.php",
-    "test-auth-code": "./vendor/bin/phpunit /Applications/MAMP/htdocs/local_folder/@aslamhus/php/Spotify/tests/TestAuthorizationCode.php"
+    "test-auth-code": "./vendor/bin/phpunit /Applications/MAMP/htdocs/local_folder/@aslamhus/php/Spotify/tests/TestAuthorizationCode.php",
+    "test-artist": "./vendor/bin/phpunit /Applications/MAMP/htdocs/local_folder/@aslamhus/php/Spotify/tests/TestArtist.php",
+    "test-search": "./vendor/bin/phpunit /Applications/MAMP/htdocs/local_folder/@aslamhus/php/Spotify/tests/TestSearch.php"
   }
 }

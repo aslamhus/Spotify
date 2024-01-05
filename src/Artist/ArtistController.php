@@ -22,27 +22,24 @@ class ArtistController
         return $this->spotify->get("artists/$artistId");
     }
 
-    protected function fetchTracks(string $artistId, string $albumId): ?array
-    {
-        return $this->spotify->get("albums/$artistId/tracks");
-    }
+    // protected function fetchTracks(string $artistId, string $albumId): ?array
+    // {
+    //     return $this->spotify->get("albums/$artistId/tracks");
+    // }
 
+    /**
+     * Fetch albums
+     *
+     * @param string $artistId
+     * @return ?array
+     */
     protected function fetchAlbums(string $artistId): ?array
     {
-        $response =  $this->spotify->get("artists/$artistId/albums");
-        // parse response into array of Album objects
-        return $this->parseAlbumsResponse($response);
+        return $this->spotify->get("artists/$artistId/albums");
 
     }
 
-    private function parseAlbumsResponse(array $response): array
-    {
-        $albums = [];
-        foreach($response['items'] as $album) {
-            $albums[] = new Album($this->spotify, $album['id'], $album);
-        }
-        return $albums;
-    }
+
 
 
 }

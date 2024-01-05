@@ -26,13 +26,16 @@ class PaginationController
      *
      * Parses a paginated result and returns the items
      *
-     * @param string $playlistId
+     * @param string $path - the pagination path to fetch, i.e. 'me/playlists' or 'search'
+     * @param array [$query] - optional query parameters, i.e. ['market' => 'US']
+     * @param array [$headers] - optional headers to send with the request
+     *
      * @return array
      */
-    public function fetchData(string $path): array
+    public function fetchData(string $path, $query = [], $headers = null): array
     {
         // get playlists for user
-        $paginationResult =  $this->spotify->get($path);
+        $paginationResult =  $this->spotify->get($path, $query, $headers);
         $this->pagesLoaded++;
         return $this->parsePaginatedData($paginationResult);
     }
@@ -45,7 +48,7 @@ class PaginationController
      *
      * @return ?array - returns null if there is no next page
      */
-    public function fetchNext(): array
+    protected function fetchNext(): array
     {
         if(empty($this->next)) {
             return null;
@@ -77,6 +80,19 @@ class PaginationController
         return $data['items'] ?? [];
 
     }
+
+    /**
+    * Has next
+    *
+    * Checks if there is a next page
+    *
+    * @return boolean
+    */
+    public function hasNext(): bool
+    {
+        return !empty($this->next);
+    }
+
 
 
 

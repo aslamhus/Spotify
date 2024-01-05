@@ -110,12 +110,56 @@ $artistData = $spotify->get('artists/3WrFJ7ztbogyGnTHbHJFl2');
 
 ### Search
 
+Search results are paginated. When you perform a search, you can get a `SearchResult` object for each type you've searched for, i.e. 'artist, track, album' would return a separate `SearchResult` object for each type.
+
+**_Note: Search is currently only available for tracks, albums and artists_**
+
+#### Basic search
+
 ```php
 // Example: Search for artists with a query
-$searchResults = $spotify->search('Steely Dan', 'artist');
+$search = new Search($spotify);
+$search-exec('Steely Dan', 'artist, track');
+// get an associative array of all the search results, i.e. ['tracks' => SearchResult, 'artists' => SearchResult]
+$searchResults = $search->getAllResults();
+// get the search result items for tracks
+$trackItems = $searchResults['tracks']->getItems();
+```
 
-// Example: Search for albums with additional parameters
-$searchResults = $spotify->search('Aja', 'album', 5, 0, 'US');
+#### Get Search Items
+
+```php
+$search->exec('Pink Floyd', 'artist, track');
+// get a SearchResult object
+$searchResult = $search->getResultsForType('track');
+// SearchResult objects are json serializable, so you can print them to json
+echo json_encode($searchResult, JSON_PRETTY_PRINT);
+// You can also get the search items. In this case, a Tracks object is returned
+$tracks = $searchResult->getItems();
+// print the track names
+print_r($tracks->getTrackNames())
+```
+
+#### Search Result Types
+
+Each `SearchResult` object contains an array of search items. Depending on the given type you are searching for, each item in the array will be an entity object like `Aritst` or `Album`. If you are searching for tracks, instead of an array of `Track` objects, you will receieve the `Tracks` object, which functions like an array but with additional methods for managing and ssearching for tracks.
+
+#### Get next results
+
+Let's demonstrate how to get the next results.
+Each `SearchResult` object has a `next` method, which gets the next set of results
+if available. If there are no next results, `next` returns null.
+
+```php
+// set the result set limit to 10
+$search->exec('Steely Dan', 'artist', 10);
+$artistResult = $search->getResultsForType('artist');
+if($artistResult->hasNext()){
+    // get the next 10 results
+    $artistResult->next();
+}
+// now the search result will have 10 new items appended
+count($artistResult->getItems()); // returns 10
 ```
 
 ### Get all artist albums

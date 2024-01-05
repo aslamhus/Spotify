@@ -7,7 +7,7 @@ use Aslamhus\SpotifyClient\Track\Track;
 
 interface TracksInterface
 {
-    public function findTracksByName(string $name): ?Tracks;
+    public function findTracksByName(string $name): mixed;
 
     public function findTrackById(string $id): ?Track;
 

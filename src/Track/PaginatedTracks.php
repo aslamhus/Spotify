@@ -12,6 +12,9 @@ use Aslamhus\SpotifyClient\Track\Tracks;
  * Paginated Tracks
  *
  * This class is used to paginate tracks.
+ * It is coupled with the Playlist class. It's initial data is fetched from the Playlist class.
+ * It can be used to fetch next results and add them to the tracks array.
+ *
  * How pagination works:
  *
  * The Spotify API returns a paginated result with a limit of 100 items per page.
@@ -49,24 +52,12 @@ class PaginatedTracks extends PaginationController implements TracksInterface, \
     }
 
     /**
-     * Has next
-     *
-     * Checks if there is a next page
-     *
-     * @return boolean
-     */
-    public function hasNext(): bool
-    {
-        return !empty($this->next);
-    }
-
-    /**
-     * Fetch next
-     *
-     * Fetches the next page of results and appends the tracks to the tracks array
-     *
-     * @return PaginatedTracks
-     */
+      * Fetch next
+      *
+      * Fetches the next page of results and appends the tracks to the tracks array
+      *
+      * @return PaginatedTracks
+      */
     public function next(): self
     {
 

@@ -16,6 +16,8 @@ use Aslamhus\SpotifyClient\Auth\AccessToken;
 use Aslamhus\SpotifyClient\Interfaces\AuthorizationInterface;
 use Aslamhus\SpotifyClient\User\User;
 use Aslamhus\SpotifyClient\Playlist\Playlist;
+use Aslamhus\SpotifyClient\Search\Search;
+use Aslamhus\SpotifyClient\Track\Tracks;
 
 class TestSpotify extends TestCase
 {
@@ -52,19 +54,18 @@ class TestSpotify extends TestCase
     //     $this->assertNotEmpty($artistData);
     // }
 
-    public function testSearchArtist()
-    {
-        $artistData = $this->spotify->search('Steely Dan', 'artist');
-        var_dump($artistData);
-        $this->assertNotEmpty($artistData);
-    }
-
-    // public function testGetArtistTracks()
+    // public function testSearchArtist()
     // {
+    //     $artistData = $this->spotify->search('Steely Dan', 'artist');
+    //     var_dump($artistData);
+    //     $this->assertNotEmpty($artistData);
+    // }
 
-    //     $tracks = [];
+    // public function testSearchForTrackByArtist()
+    // {
+    //     $tracks = new Tracks([]);
     //     // search for an artist
-    //     $artistName = 'Ed Cherry';
+    //     $artistName = 'Cory Weeds';
     //     $search = $this->spotify->search($artistName, 'artist');
     //     $items = $search['artists']['items'];
     //     $result = false;
@@ -83,17 +84,61 @@ class TestSpotify extends TestCase
     //     $albums = $artists->getAlbums();
     //     // push all tracks for each album into $tracks array
     //     foreach($albums as $album) {
+    //         // get album name
     //         $albumName = $album->getName();
-    //         $this->assertNotEmpty($albumName);
+    //         // get all tracks for album
     //         $albumTracks = $album->getTracks();
     //         foreach($albumTracks as $track) {
-    //             $trackName = $track->getName();
-    //             $this->assertNotEmpty($trackName);
-    //             $tracks[$albumName][$trackName] = $track->getUri();
+    //             $tracks->addTrack($track);
+    //         }
+
+
+    //     }
+    //     echo json_encode($tracks->getTrackNames(), JSON_PRETTY_PRINT);
+    //     $matches = $tracks->matchTracksByName("Home cookin");
+    //     echo "Matches? \n\n";
+    //     if($matches) {
+    //         foreach($matches as $match) {
+    //             echo "relevance: {$match['relevance']} name: {$match['name']} \n";
     //         }
     //     }
-    //     echo json_encode($tracks, JSON_PRETTY_PRINT);
     //     $this->assertNotEmpty($tracks);
+
+    // }
+
+    public function testPaginatedSearch()
+    {
+        $search = new Search($this->spotify);
+        $search->exec('Steely Dan', 'artist,album');
+        $artistResults = $search->getResults('artists'); // returns SearchResult
+        var_dump($artistResults);
+        // var_dump(array_keys($artistResults->getItems()));
+        // perform a manual search over artists results
+        // logic here
+        // if not found, get next page
+        // $artistResults->next();
+
+    }
+
+    // public function testSearchByTrackName()
+    // {
+    //     $searchArtist = 'Ed Cherry';
+    //     $query = 'Are We There Yet?';
+    //     $type = 'track';
+    //     $search = $this->spotify->search($query, $type, 50);
+    //     $searchItems = $search['tracks']['items'];
+    //     foreach($searchItems as $item) {
+    //         $artists = $item['artists'];
+    //         foreach($artists as $artist) {
+    //             echo "Artist: {$artist['name']}\n";
+    //             if(trim($artist['name']) == $searchArtist) {
+
+    //                 echo "********** Found Artist: {$artist['name']} \n";
+    //                 break;
+    //             }
+    //         }
+
+    //     }
 
     // }
 

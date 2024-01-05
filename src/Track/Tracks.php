@@ -103,7 +103,13 @@ class Tracks implements TracksInterface, \JsonSerializable, \Countable, \Iterato
         $this->tracks = array_splice($this->tracks, $insertBefore, 0, $tracks);
     }
 
-    public function findTracksByName(string $name): ?Tracks
+    /**
+     * Find tracks by name (closest match)
+     *
+     * @param string $name
+     * @return ?array
+     */
+    public function findTracksByName(string $name): ?array
     {
         $tracks = new Tracks([]);
         foreach($this->tracks as $track) {
@@ -111,10 +117,60 @@ class Tracks implements TracksInterface, \JsonSerializable, \Countable, \Iterato
                 $tracks->addTrack($track);
             }
         }
-        if(count($tracks) > 0) {
+        if($tracks !== null && count($tracks) > 0) {
             return $tracks;
         }
         return null;
+    }
+
+    /**
+     * Match tracks by name (fuzzy search)
+     *
+     * @param string $name - the name of the track
+     * @return array - array of tracks sorted by relevance
+     */
+    public function matchTracksByName(string $name): ?array
+    {
+
+        return $this->levenshteinSearch($name);
+    }
+
+    private function levenshteinSearch(string $name, int $threshold = 3): ?array
+    {
+        $tracks = [];
+        $shortest = -1;
+
+        // loop through words to find the closest
+        foreach ($this->tracks as $track) {
+            $word = $track->getName();
+            // calculate the distance between the input word,
+            // and the current word
+            $lev = levenshtein($name, $word);
+            // check for an exact match
+            if ($lev == 0) {
+
+                $tracks[] = ['relevance' => $lev, 'name' => $track->getName(), 'track' => $track];
+                break;
+            }
+
+            // for all other cases
+            if ($lev <= $shortest || $shortest < 0) {
+                // log the match and shortest distance
+                $shortest = $lev;
+                $tracks[] = ['relevance' => $lev, 'name' => $track->getName(),  'track' => $track];
+            }
+        }
+
+
+        // sort tracks by relevance
+        if(count($tracks) > 0) {
+            usort($tracks, function ($a, $b) {
+                return $a['relevance'] <=> $b['relevance'];
+            });
+            return $tracks;
+        }
+
+        return $tracks;
     }
 
     public function findTrackById(string $id): ?Track
@@ -149,6 +205,26 @@ class Tracks implements TracksInterface, \JsonSerializable, \Countable, \Iterato
             return $tracks;
         }
         return null;
+    }
+
+
+    public function getTrackNames(): array
+    {
+        return $this->getTracksByProperty('name');
+    }
+
+    public function getTrackIds(): array
+    {
+        return $this->getTracksByProperty('id');
+    }
+
+    private function getTracksByProperty(string $prop)
+    {
+        $tracks = [];
+        foreach($this->tracks as $track) {
+            $tracks[] = $track->$prop;
+        }
+        return $tracks;
     }
 
     public function getIterator(): \ArrayIterator

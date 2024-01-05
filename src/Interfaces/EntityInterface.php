@@ -18,4 +18,8 @@ interface EntityInterface
 
 
     public function setData(array $data): void;
+
+    public function getName(): string;
+
+    public function getId(): string;
 }
