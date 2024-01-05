@@ -92,6 +92,11 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
         return $this->tracks;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     public function getDetails(): array
     {
         return [

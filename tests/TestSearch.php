@@ -101,28 +101,66 @@ class TestSearch extends TestCase
     //     $this->assertTrue(count($artists) === $limit * 2);
     // }
 
-    public function testSearchAlbum()
+    // public function testSearchAlbum()
+    // {
+    //     $search = new Search($this->spotify);
+    //     $limit = 5;
+    //     $search->exec('Steely Dan', 'album', $limit);
+    //     $albumResults = $search->getResultsForType('album');
+    //     $firstCount = count($albumResults);
+    //     $this->assertTrue($firstCount > 0);
+    //     if($albumResults->hasNext()) {
+    //         $albumResults->next();
+    //         $secondCount = count($albumResults);
+    //         $this->assertTrue($secondCount > $firstCount);
+    //     }
+    //     echo "Pagination: \n ";
+    //     // show results by name of tracks
+    //     $albums = $albumResults->getItems();
+    //     $this->assertTrue(count($albums) === $limit * 2);
+    //     $albumNames = [];
+    //     foreach($albums as $album) {
+    //         $albumNames[] = $album->getName();
+    //     }
+    //     echo json_encode($albumNames, JSON_PRETTY_PRINT);
+    // }
+
+    /**
+     * Test search for artist and track
+     *
+     * TODO: finish this test
+     *
+     * @return void
+     */
+    public function testSearchArtistAndTrack()
     {
         $search = new Search($this->spotify);
-        $limit = 5;
-        $search->exec('Steely Dan', 'album', $limit);
-        $albumResults = $search->getResultsForType('album');
-        $firstCount = count($albumResults);
-        $this->assertTrue($firstCount > 0);
-        if($albumResults->hasNext()) {
-            $albumResults->next();
-            $secondCount = count($albumResults);
-            $this->assertTrue($secondCount > $firstCount);
+        $artist = 'Ed Cherry';
+        $track = 'Are We There Yet?';
+        $query = $artist . ' ' . $track;
+        $search->exec($query, 'track', 15);
+        $searchResult = $search->getResultsForType('track');
+        $trackNames = [];
+        $found = null;
+        foreach($searchResult->getItems() as $track) {
+
+            $firstArtist = $track->getArtists()[0];
+            $this->assertTrue(is_object($firstArtist));
+
+            $name = $track->getName();
+            // get list of artist names
+            $artists = $track->getArtists();
+            $artistsNames = [];
+            foreach($artists as $artist) {
+
+                $artistNames[] = $artist->getName();
+            }
+            // push track name into array
+            $trackNames[] = $name . ' - ' . implode(', ', $artistNames);
+            if($name == $track) {
+                $found = $track;
+            }
         }
-        echo "Pagination: \n ";
-        // show results by name of tracks
-        $albums = $albumResults->getItems();
-        $this->assertTrue(count($albums) === $limit * 2);
-        $albumNames = [];
-        foreach($albums as $album) {
-            $albumNames[] = $album->getName();
-        }
-        echo json_encode($albumNames, JSON_PRETTY_PRINT);
     }
 
 

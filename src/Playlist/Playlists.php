@@ -67,6 +67,16 @@ class Playlists extends PaginationController implements EntityInterface, \JsonSe
         return $this;
     }
 
+    public function getName(): string
+    {
+        return 'Playlists';
+    }
+
+    public function getId(): string
+    {
+        return '';
+    }
+
     /**
      * Get playlists
      *

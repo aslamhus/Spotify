@@ -2,7 +2,6 @@
 
 namespace Aslamhus\SpotifyClient\Search;
 
-use Aslamhus\SpotifyClient\Interfaces\EntityInterface;
 use Aslamhus\SpotifyClient\Spotify;
 
 class Search

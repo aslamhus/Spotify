@@ -52,6 +52,16 @@ class User extends UserController implements EntityInterface, \JsonSerializable
         return $this;
     }
 
+    public function getDisplayName(): string
+    {
+        return $this->display_name;
+    }
+
+    public function getName(): string
+    {
+        return $this->display_name;
+    }
+
     public function setData(array $data): void
     {
         $this->userId = $data['id'] ?? '';
