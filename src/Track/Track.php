@@ -4,6 +4,7 @@ namespace Aslamhus\SpotifyClient\Track;
 
 use Aslamhus\SpotifyClient\Interfaces\EntityInterface;
 use Aslamhus\SpotifyClient\Spotify;
+use Aslamhus\SpotifyClient\Artist\Artist;
 
 /**
  * Track ORM
@@ -51,6 +52,11 @@ class Track extends TrackController implements EntityInterface, \JsonSerializabl
         return $this->id;
     }
 
+    /**
+     * Get artists
+     *
+     * @return Array<Artist>
+     */
     public function getArtists(): array
     {
         return $this->artists;
@@ -138,7 +144,12 @@ class Track extends TrackController implements EntityInterface, \JsonSerializabl
     {
 
         $this->id = $data['id'];
-        $this->artists = $data['artists'] ?? [];
+        $this->artists = [];
+        if(isset($data['artists'])) {
+            foreach($data['artists'] as $artist) {
+                $this->artists[] = new Artist($this->spotify, $artist['id'], $artist);
+            }
+        }
         $this->available_markets = $data['available_markets'] ?? [];
         $this->disc_number = $data['disc_number'] ?? 0;
         $this->duration_ms = $data['duration_ms'] ?? 0;

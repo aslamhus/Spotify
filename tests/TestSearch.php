@@ -33,11 +33,11 @@ class TestSearch extends TestCase
         $this->clientCredentials = new ClientCredentials($this->client);
         $this->spotify = new Spotify($this->clientCredentials->getToken(), $this->client);
         $this->refreshableToken =   new AccessToken([
-            "access_token" => "BQCcroMuU4jLgxEEPqAwfdw36RuTi0aOm_t6Uhm_AW_F_csv7umypB4O2IWo9_Z5RTByMKP5UrDx-fWo_zQlp2FFOpCNqqSicIAIzZd5stqqg2gi7ED_JN6yHk7sgz1pqWzUVm3ISLg2jN6KeTyDF_cmegT3ycXzgokQgGmCAtb98xdmYZ_cBgKtGI7ywdtTa5PxKKymR5Ezc-fRLXL3zUVcBMZCJGBffi9wmT74ElT7TCrvUocROnYOL26jBbBpORekfpXSnqhWVi7EQbwI_6m9dwrf-Jto",
+            "access_token" => $_ENV['ACCESS_TOKEN'],
             "token_type" => "Bearer",
             "expires_in" => 3600,
-            "scope" => "playlist-read-private playlist-read-collaborative ugc-image-upload playlist-modify-private playlist-modify-public user-read-email user-read-private",
-            "refresh_token" => "AQB_Rvfmm-ahUwh8WLkucD3bRxMGdgYMBNQc46fRaB6ik9qKOBqC10ByzZ2a8nKlAxNr2R2sRNORVXVmUbYe4HLG5qzo5HeSEY7eyCyALkfejCeIa7Q3q3ZmpJ4jRpsOLh0"
+            "scope" => $_ENV['SCOPE'],
+            "refresh_token" => $_ENV['REFRESH_TOKEN']
 
         ]);
     }
