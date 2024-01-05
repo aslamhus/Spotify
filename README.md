@@ -259,6 +259,17 @@ if($trackToDelete) {
 }
 ```
 
+### Unfollow a playlist
+
+#### A note about deleting / unfollowing playlists from the [Spotify API Docs](https://developer.spotify.com/documentation/web-api/concepts/playlists):
+
+"We have no endpoint for deleting a playlist in the Web API; the notion of deleting a playlist is not relevant within the Spotify’s playlist system. Even if you are the playlist’s owner and you choose to manually remove it from your own list of playlists, you are simply unfollowing it. Although this behavior may sound strange, it means that other users who are already following the playlist can keep enjoying it. Manually restoring a deleted playlist through the Spotify Accounts Service is the same thing as following one of your own playlists that you have previously unfollowed."
+
+```php
+$playlist = new Playlist($this->spotify, $this->user, ['id' => 'playlist-id-string']);
+$playlist->unfollow();
+```
+
 ### Additional playlist methods
 
 ```php
