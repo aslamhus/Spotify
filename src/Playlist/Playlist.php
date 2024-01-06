@@ -8,6 +8,7 @@ use Aslamhus\SpotifyClient\Track\Track;
 use Aslamhus\SpotifyClient\Track\Tracks;
 use Aslamhus\SpotifyClient\User\User;
 use Aslamhus\SpotifyClient\Track\PaginatedTracks;
+use Aslamhus\SpotifyClient\Exception\SpotifyPlaylistException;
 
 /**
  * Playlist ORM
@@ -141,7 +142,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
     public function getData(): self
     {
         if(empty($this->id)) {
-            throw new \Exception('Cannot get playlist data, playlist id is empty');
+            throw new SpotifyPlaylistException('Cannot get playlist data, playlist id is empty');
         }
         // get playlist data for playlist with id $this->id
         $response =  $this->fetchData($this->id);
@@ -170,11 +171,11 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
     {
         // get file
         if(!is_file($filePath)) {
-            throw new \Exception("Invalid file path: $filePath");
+            throw new SpotifyPlaylistException("Invalid file path: $filePath");
         }
         // max file size check
         if(filesize($filePath) > self::COVER_IMG_MAX_FILE_SIZE) {
-            throw new \Exception("File size is above maximum (" . self::COVER_IMG_MAX_FILE_SIZE . "): " . filesize($filePath));
+            throw new SpotifyPlaylistException("File size is above maximum (" . self::COVER_IMG_MAX_FILE_SIZE . "): " . filesize($filePath));
         }
         // get file contents and encode to base64
         $file = base64_encode(file_get_contents($filePath));
@@ -213,7 +214,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
     {
         $name = $options['name'] ?? '';
         if(empty($name)) {
-            throw new \Exception('Cannot create playlist, name is empty');
+            throw new SpotifyPlaylistException('Cannot create playlist, name is empty');
         }
         $description = $options['description'] ?? '';
         $public = $options['public'] ?? false;
@@ -234,7 +235,6 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
      */
     public function changeDetails(array $options): ?array
     {
-        $this->checkTracksExist();
         $response =  parent::changeDetailsForPlaylist($this->id, $options);
         // update the local model
         $this->name = $options['name'] ?? $this->name;
@@ -254,7 +254,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
     public function addTrack(Track $track, int $position = 0): ?array
     {
         if(empty($this->id)) {
-            throw new \Exception('Cannot add items to playlist, playlist id is empty');
+            throw new SpotifyPlaylistException('Cannot add items to playlist, playlist id is empty');
         }
         $this->checkTracksExist();
         // convert the trackUris array to an array of uris
@@ -279,7 +279,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
     public function addTracks(Tracks $tracks, int $position = 0): ?array
     {
         if(empty($this->id)) {
-            throw new \Exception('Cannot add items to playlist, playlist id is empty');
+            throw new SpotifyPlaylistException('Cannot add items to playlist, playlist id is empty');
         }
         $this->checkTracksExist();
         // convert the trackUris array to an array of uris
@@ -309,7 +309,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
     public function removeTracks(Tracks $tracks): ?array
     {
         if(empty($this->id)) {
-            throw new \Exception('Cannot remove items from playlist, playlist id is empty');
+            throw new SpotifyPlaylistException('Cannot remove items from playlist, playlist id is empty');
         }
         $this->checkTracksExist();
         // convert the trackUris array to an array of objects
@@ -373,7 +373,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
 
         // check that the number of tracks to replace is less than the number of tracks in the playlist
         if(count($tracks) > $this->tracks->getTotal()) {
-            throw new \Exception('Cannot replace tracks, number of tracks to replace is greater than the number of tracks in the playlist');
+            throw new SpotifyPlaylistException('Cannot replace tracks, number of tracks to replace is greater than the number of tracks in the playlist');
         }
         // replace tracks in playlist
         $response =  parent::updatePlaylistItems($this->id, [], $tracks);
@@ -422,7 +422,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
     private function checkTracksExist(): bool
     {
         if(empty($this->tracks)) {
-            throw new \Exception('Cannot perform action, no tracks exist or they have not been loaded');
+            throw new SpotifyPlaylistException('Cannot perform action, no tracks exist or they have not been loaded');
         }
         return true;
     }
