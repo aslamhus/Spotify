@@ -2,6 +2,8 @@
 
 namespace Aslamhus\SpotifyClient\Exception;
 
+use Exception;
+
 class SpotifyPlaylistException extends Exception
 {
     public function __construct($message = null, $code = 0, Exception $previous = null)

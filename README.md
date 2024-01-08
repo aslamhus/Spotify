@@ -126,6 +126,10 @@ $searchResults = $search->getAllResults();
 $trackItems = $searchResults['tracks']->getItems();
 ```
 
+#### Using queries with special characters
+
+There is scant documentation on how to format Spotify API searches, but tests show it is best to `urlencode` your queries. For instance, searching for the track "Home Cookin' by Cory Weeds" will return no results if not urlencoded.
+
 #### Get Search Items
 
 ```php

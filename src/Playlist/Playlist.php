@@ -256,7 +256,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
         if(empty($this->id)) {
             throw new SpotifyPlaylistException('Cannot add items to playlist, playlist id is empty');
         }
-        $this->checkTracksExist();
+        
         // convert the trackUris array to an array of uris
         $itemsToAdd = [$track->getUri()];
         // make request
