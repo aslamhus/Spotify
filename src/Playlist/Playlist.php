@@ -45,6 +45,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
         parent::__construct($spotify);
         $this->spotify = $spotify;
         $this->user = $user;
+        $this->tracks = new PaginatedTracks($this->spotify, $data['tracks']);
         // if the user object is empty, get the user data
         if(empty($this->user->getId())) {
             $this->user = $this->user->getData();
@@ -256,7 +257,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
         if(empty($this->id)) {
             throw new SpotifyPlaylistException('Cannot add items to playlist, playlist id is empty');
         }
-        
+
         // convert the trackUris array to an array of uris
         $itemsToAdd = [$track->getUri()];
         // make request

@@ -2,6 +2,7 @@
 
 namespace Aslamhus\SpotifyClient\Track;
 
+use Aslamhus\SpotifyClient\Album\Album;
 use Aslamhus\SpotifyClient\Interfaces\EntityInterface;
 use Aslamhus\SpotifyClient\Spotify;
 use Aslamhus\SpotifyClient\Artist\Artist;
@@ -18,6 +19,7 @@ class Track extends TrackController implements EntityInterface, \JsonSerializabl
     private Spotify $spotify;
     public string $id;
     public array $artists = [];
+    public Album $album;
     public array $available_markets = [];
     public int $disc_number = 0;
     public int $duration_ms = 0;
@@ -39,6 +41,7 @@ class Track extends TrackController implements EntityInterface, \JsonSerializabl
         parent::__construct($spotify);
         $this->spotify = $spotify;
         $this->id = $id;
+        $this->album = new Album($this->spotify, '', []);
         if(!empty($data)) {
             $this->setData($data);
         } else {
@@ -107,6 +110,11 @@ class Track extends TrackController implements EntityInterface, \JsonSerializabl
         return $this->name;
     }
 
+    public function getAlbum(): Album
+    {
+        return $this->album;
+    }
+
     public function getPopularity(): int
     {
         return $this->popularity;
@@ -150,6 +158,10 @@ class Track extends TrackController implements EntityInterface, \JsonSerializabl
                 $this->artists[] = new Artist($this->spotify, $artist['id'], $artist);
             }
         }
+        // set albums
+        if(isset($data['album'])) {
+            $this->album = new Album($this->spotify, $data['album']['id'], $data['album']);
+        }
         $this->available_markets = $data['available_markets'] ?? [];
         $this->disc_number = $data['disc_number'] ?? 0;
         $this->duration_ms = $data['duration_ms'] ?? 0;
@@ -173,6 +185,7 @@ class Track extends TrackController implements EntityInterface, \JsonSerializabl
         return [
             'id' => $this->id,
             'artists' => $this->artists,
+            'album' => $this->album,
             'available_markets' => $this->available_markets,
             'disc_number' => $this->disc_number,
             'duration_ms' => $this->duration_ms,

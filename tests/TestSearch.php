@@ -142,11 +142,12 @@ class TestSearch extends TestCase
         $searchResult = $search->getResultsForType('track');
         $trackNames = [];
         $found = null;
+
         foreach($searchResult->getItems() as $track) {
 
             $firstArtist = $track->getArtists()[0];
             $this->assertTrue(is_object($firstArtist));
-
+            $album = $track->getAlbum();
             $name = $track->getName();
             // get list of artist names
             $artists = $track->getArtists();
