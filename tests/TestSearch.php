@@ -148,6 +148,7 @@ class TestSearch extends TestCase
             $firstArtist = $track->getArtists()[0];
             $this->assertTrue(is_object($firstArtist));
             $album = $track->getAlbum();
+            echo "Album: " . $album->getName() . "\n";
             $name = $track->getName();
             // get list of artist names
             $artists = $track->getArtists();

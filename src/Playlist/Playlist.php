@@ -45,7 +45,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
         parent::__construct($spotify);
         $this->spotify = $spotify;
         $this->user = $user;
-        $this->tracks = new PaginatedTracks($this->spotify, $data['tracks']);
+        $this->tracks = new PaginatedTracks($this->spotify, $data['tracks'] ?? []);
         // if the user object is empty, get the user data
         if(empty($this->user->getId())) {
             $this->user = $this->user->getData();
