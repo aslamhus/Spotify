@@ -142,12 +142,12 @@ class TestPlaylist extends TestCase
     //     ]);
     // }
 
-    // public function testDeletePlaylist()
-    // {
-    //     $playlist = new Playlist($this->spotify, $this->user, ['id' => '1ApzGsk2sZUVENwCeKU6fA']);
-    //     $result = $playlist->clearPlaylist();
-    //     var_dump($result);
-    // }
+    public function testClearPlaylist()
+    {
+        $playlist = new Playlist($this->spotify, $this->user, ['id' => '1OCmKmlRU8lQjJPdZ49ZSh']);
+        $result = $playlist->clearPlaylist();
+        var_dump($result);
+    }
 
     // public function testReorderTracks()
     // {

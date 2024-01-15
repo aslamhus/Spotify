@@ -75,7 +75,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
         $this->name = $data['name'] ?? '';
         $this->public = $data['public'] ?? false;
         $this->snapshot_id = $data['snapshot_id'] ?? '';
-        if(isset($data['tracks'])) {
+        if(isset($data['tracks']) && !empty($data['tracks'])) {
             $this->tracks = new PaginatedTracks($this->spotify, $data['tracks']);
         }
 
@@ -335,9 +335,9 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
      */
     public function clearPlaylist(): ?array
     {
-        $this->checkTracksExist();
+
         // remove all tracks from playlist
-        $response =  $this->removeTracks($this->tracks->toTracks());
+        $response = parent::removeAllTracksFromPlaylist($this->id);
         // update local model
         $this->tracks = new PaginatedTracks($this->spotify, []);
         return $response;

@@ -130,6 +130,15 @@ class PlaylistController implements EntityControllerInterface
     }
 
 
+    protected function removeAllTracksFromPlaylist(string $playlistId)
+    {
+
+        // build query string with empty tracks
+        $queryString = "?uris=";
+        return $this->spotify->put("playlists/$playlistId/tracks$queryString", []);
+    }
+
+
     /**
      * Get Playlists for logged in User
      *
@@ -197,7 +206,6 @@ class PlaylistController implements EntityControllerInterface
         // build query string with tracks
         $queryString = "";
         if(!empty($tracks)) {
-
             $uris = [];
             foreach($tracks->toArray() as $track) {
                 $uris[] = $track->getUri();
