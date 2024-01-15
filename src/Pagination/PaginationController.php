@@ -72,6 +72,10 @@ class PaginationController
     public function parsePaginatedData(array $data): array
     {
         $this->total = $data['total'] ?? 0;
+        // prevent division by zero
+        if($this->total === 0) {
+            return [];
+        }
         $this->limit = $data['limit'] ?? $this->limit;
         $this->offset = $data['offset'] ?? $this->offset;
         $this->next = $data['next'] ?? '';
