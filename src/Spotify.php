@@ -9,7 +9,7 @@ use Aslamhus\SpotifyClient\Exception\SpotifyRequestException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Spotify API client v1.2.6
+ * Spotify API client v1.2.7
  *
  * This class is responsible for making requests to the Spotify API.
  *
