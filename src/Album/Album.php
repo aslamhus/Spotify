@@ -3,6 +3,7 @@
 namespace Aslamhus\SpotifyClient\Album;
 
 use Aslamhus\SpotifyClient\Spotify;
+use Aslamhus\SpotifyClient\Artist\Artist;
 
 /**
  * Album ORM
@@ -11,6 +12,7 @@ use Aslamhus\SpotifyClient\Spotify;
  */
 class Album extends AlbumController implements \JsonSerializable
 {
+    private Spotify $spotify;
     private string $albumId;
     private int $total_tracks = 0;
     private string $album_type = '';
@@ -26,6 +28,7 @@ class Album extends AlbumController implements \JsonSerializable
     public function __construct(Spotify $spotify, string $albumId, array $data = [])
     {
         parent::__construct($spotify);
+        $this->spotify = $spotify;
         $this->albumId = $albumId;
         if(!empty($data)) {
             $this->parseAlbumData($data);
@@ -120,7 +123,12 @@ class Album extends AlbumController implements \JsonSerializable
         $this->release_date_precision = $data['release_date_precision'] ?? '';
         $this->type = $data['type'] ?? '';
         $this->uri = $data['uri'] ?? '';
-        $this->artists = $data['artists'] ?? [];
+        $this->artists = [];
+        if(!empty($data['artists'])) {
+            foreach($data['artists'] as $artist) {
+                $this->artists[] = new Artist($this->spotify, $artist['id'], $artist);
+            }
+        }
 
     }
 
