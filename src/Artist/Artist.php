@@ -108,6 +108,11 @@ class Artist extends ArtistController implements EntityInterface, \JsonSerializa
         return $this->albums;
     }
 
+    public function getImages(): array
+    {
+        return $this->images;
+    }
+
 
     /**
     * Parse albums response
