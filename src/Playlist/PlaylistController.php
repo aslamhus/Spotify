@@ -38,10 +38,10 @@ class PlaylistController implements EntityControllerInterface
     protected static function createPlaylistForUser(Spotify $spotify, User $user, string $name, string $description, $public = false): ?array
     {
         $data = [
-             'name' => $name,
-             'description' => $description,
-             'public' => $public
-         ];
+            'name' => $name,
+            'description' => $description,
+            'public' => $public
+        ];
         $userId = $user->getId();
         return $spotify->post("users/$userId/playlists", $data);
     }
@@ -60,12 +60,12 @@ class PlaylistController implements EntityControllerInterface
      *      @var string [$description] - the description of the playlist
      *      @var bool [$public] - whether the playlist is public or not (default: false)
      * }
-    *
+     *
      * @return array|null
      */
     protected function changeDetailsForPlaylist(string $playlistId, array $options): ?array
     {
-        if(!isset($options['name']) && !isset($options['description']) && !isset($options['public'])) {
+        if (!isset($options['name']) && !isset($options['description']) && !isset($options['public'])) {
             throw new \Exception('Cannot change details for playlist, options are empty');
         }
         return $this->spotify->put("playlists/$playlistId", $options);
@@ -87,13 +87,13 @@ class PlaylistController implements EntityControllerInterface
      */
     protected function addTracksToPlaylist(string $playlistId, array $trackUris, ?int $position = null)
     {
-        if(empty($trackUris)) {
+        if (empty($trackUris)) {
             throw new \Exception('Cannot add tracks to playlist, trackUris is empty');
         }
         $data = [
             'uris' => $trackUris
         ];
-        if(!empty($position)) {
+        if (!empty($position)) {
             $data['position'] = $position;
         }
         return $this->spotify->post("playlists/$playlistId/tracks", $data);
@@ -119,7 +119,7 @@ class PlaylistController implements EntityControllerInterface
      */
     protected function removeTracksFromPlaylist(string $playlistId, array $trackUris, string $snapshotId)
     {
-        if(empty($trackUris)) {
+        if (empty($trackUris)) {
             throw new \Exception('Cannot remove tracks from playlist, trackUris is empty');
         }
         $data = [
@@ -151,7 +151,7 @@ class PlaylistController implements EntityControllerInterface
      */
     protected function getPlaylistsForUser(User $user, int $offset = 0, $limit = 50): array
     {
-        if(empty($user->getId())) {
+        if (empty($user->getId())) {
             throw new \Exception('Cannot get playlists for user, user id is empty');
         }
         $userId = $user->getId();
@@ -205,9 +205,9 @@ class PlaylistController implements EntityControllerInterface
         $data['range_length'] = $range['range_length'] ?? 1;
         // build query string with tracks
         $queryString = "";
-        if(!empty($tracks)) {
+        if (!empty($tracks)) {
             $uris = [];
-            foreach($tracks->toArray() as $track) {
+            foreach ($tracks->toArray() as $track) {
                 $uris[] = $track->getUri();
             }
             $queryString = "?uris=" . implode(',', $uris);
@@ -225,5 +225,4 @@ class PlaylistController implements EntityControllerInterface
     {
         return $this->spotify->delete("playlists/$playlistId/followers", []);
     }
-
 }

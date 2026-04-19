@@ -36,7 +36,7 @@ class Playlists extends PaginationController implements EntityInterface, \JsonSe
         $this->spotify = $spotify;
         $this->user = $user;
         // if the playlist data is passed in, set the data
-        if(!empty($data)) {
+        if (!empty($data)) {
             $this->setData($data);
         }
     }
@@ -50,7 +50,7 @@ class Playlists extends PaginationController implements EntityInterface, \JsonSe
     public function setData(array $data): void
     {
         // set the playlists
-        foreach($data as $playlistData) {
+        foreach ($data as $playlistData) {
             $playlist = new Playlist($this->spotify, $this->user, $playlistData);
             $this->playlists[] = $playlist;
         }
@@ -59,7 +59,7 @@ class Playlists extends PaginationController implements EntityInterface, \JsonSe
     public function getData(): self
     {
         $userId = $this->user->getId();
-        if(empty($userId)) {
+        if (empty($userId)) {
             throw new \Exception('User ID is required to get playlists. Please set the user ID or load the user data');
         }
         $items = parent::fetchData("/users/{$userId}/playlists");
@@ -95,7 +95,7 @@ class Playlists extends PaginationController implements EntityInterface, \JsonSe
     public function jsonSerialize(): array
     {
         $playlists = [];
-        foreach($this->playlists as $playlist) {
+        foreach ($this->playlists as $playlist) {
             $playlists[] = $playlist->jsonSerialize();
         }
         return [
@@ -131,6 +131,4 @@ class Playlists extends PaginationController implements EntityInterface, \JsonSe
     {
         unset($this->playlists[$offset]);
     }
-
-
 }

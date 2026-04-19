@@ -48,15 +48,14 @@ class PaginationController
      *
      * @return ?array - returns null if there is no next page
      */
-    protected function fetchNext(): array
+    protected function fetchNext(): ?array
     {
-        if(empty($this->next)) {
+        if (empty($this->next)) {
             return null;
         }
         $paginatedResult = $this->spotify->get($this->next);
         $this->pagesLoaded++;
         return $paginatedResult;
-
     }
 
 
@@ -73,7 +72,7 @@ class PaginationController
     {
         $this->total = $data['total'] ?? 0;
         // prevent division by zero
-        if($this->total === 0) {
+        if ($this->total === 0) {
             return [];
         }
         $this->limit = $data['limit'] ?? $this->limit;
@@ -82,16 +81,15 @@ class PaginationController
         $this->previous = $data['previous'] ?? '';
         $this->pages = ceil($this->total / $this->limit);
         return $data['items'] ?? [];
-
     }
 
     /**
-    * Has next
-    *
-    * Checks if there is a next page
-    *
-    * @return boolean
-    */
+     * Has next
+     *
+     * Checks if there is a next page
+     *
+     * @return boolean
+     */
     public function hasNext(): bool
     {
         return !empty($this->next);
@@ -117,8 +115,4 @@ class PaginationController
             'previous' => $this->previous,
         ];
     }
-
-
-
-
 }

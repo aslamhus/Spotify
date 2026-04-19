@@ -52,16 +52,15 @@ class TracksController implements EntityControllerInterface, PaginationInterface
 
     public function fetchNext(): array
     {
-        if(empty($this->next)) {
+        if (empty($this->next)) {
             return [];
         }
         return $this->spotify->get($this->next);
-
     }
 
     public function fetchPrevious(): array
     {
-        if(empty($this->previous)) {
+        if (empty($this->previous)) {
             return [];
         }
         return $this->spotify->get($this->previous);
@@ -71,8 +70,4 @@ class TracksController implements EntityControllerInterface, PaginationInterface
     {
         return $this->total;
     }
-
-
-
-
 }

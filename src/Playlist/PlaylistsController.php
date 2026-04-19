@@ -14,10 +14,4 @@ class PlaylistsController extends PaginationController implements EntityControll
     {
         parent::__construct($spotify, $limit, $offset);
     }
-
-
-
-
-
-
 }

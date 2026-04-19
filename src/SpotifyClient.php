@@ -24,7 +24,6 @@ class SpotifyClient
             'base_uri' => $endpoint,
             'timeout'  => 2.0,
         ]);
-
     }
 
     /**
@@ -38,11 +37,11 @@ class SpotifyClient
      * @param AccessToken $token
      * @return ResponseInterface
      */
-    public function request(string $method, $uri, array $options = [], AccessToken $token = null): ResponseInterface
+    public function request(string $method, $uri, array $options = [], ?AccessToken $token = null): ResponseInterface
     {
         $request = null;
         // add authorization header if access token is set
-        if($token !== null) {
+        if ($token !== null) {
             $options = [...$options, 'headers' => ['Authorization' => 'Bearer ' . $token->getAccessToken()]];
         }
         // make the request
@@ -54,7 +53,6 @@ class SpotifyClient
         }
 
         return $request;
-
     }
 
 
@@ -65,7 +63,7 @@ class SpotifyClient
         $statusCode = $exception->getStatusCode();
         $body = $exception->getBody();
         // handle specific errors
-        switch($statusCode) {
+        switch ($statusCode) {
             case 400:
                 // {
                 //     "error" : {
@@ -75,17 +73,16 @@ class SpotifyClient
                 //   }
                 break;
             case 401:
-                if(isset($body['error']) &&  $body['error']['message'] === 'The access token expired') {
+                if (isset($body['error']) &&  $body['error']['message'] === 'The access token expired') {
                     return new SpotifyAccessExpiredException('The access token expired');
                 }
                 break;
 
             case 403:
-                if(isset($body['error']) &&  $body['error']['message'] === 'Insufficient client scope') {
+                if (isset($body['error']) &&  $body['error']['message'] === 'Insufficient client scope') {
                     return new SpotifyRequestException('Insufficient client scope');
                 }
                 break;
-
         }
         // throw default spotify request exception
         return $exception;
@@ -109,7 +106,6 @@ class SpotifyClient
             $response = $this->request('POST', $endpoint, $options);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
             throw new SpotifyRequestException($e->getMessage(), $e->getResponse());
-
         }
         $body = $response->getBody()->getContents();
         return json_decode($body, true);
@@ -125,7 +121,7 @@ class SpotifyClient
         ];
         $response = $this->sendAuthorizationRequest('https://accounts.spotify.com/api/token', $options);
         // if access token is set, return new access token
-        if(isset($response['access_token'])) {
+        if (isset($response['access_token'])) {
             return new AccessToken($response);
         }
         return null;

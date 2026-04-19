@@ -47,11 +47,11 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
         $this->user = $user;
         $this->tracks = new PaginatedTracks($this->spotify, $data['tracks'] ?? []);
         // if the user object is empty, get the user data
-        if(empty($this->user->getId())) {
+        if (empty($this->user->getId())) {
             $this->user = $this->user->getData();
         }
         // if the playlist data is passed in, set the data
-        if(!empty($data)) {
+        if (!empty($data)) {
             $this->setData($data);
         }
     }
@@ -75,13 +75,12 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
         $this->name = $data['name'] ?? '';
         $this->public = $data['public'] ?? false;
         $this->snapshot_id = $data['snapshot_id'] ?? '';
-        if(isset($data['tracks']) && !empty($data['tracks'])) {
+        if (isset($data['tracks']) && !empty($data['tracks'])) {
             $this->tracks = new PaginatedTracks($this->spotify, $data['tracks']);
         }
 
         $this->type = $data['type'] ?? '';
         $this->uri = $data['uri'] ?? '';
-
     }
 
     public function getId(): string
@@ -142,7 +141,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
      */
     public function getData(): self
     {
-        if(empty($this->id)) {
+        if (empty($this->id)) {
             throw new SpotifyPlaylistException('Cannot get playlist data, playlist id is empty');
         }
         // get playlist data for playlist with id $this->id
@@ -171,11 +170,11 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
     public function updateCoverImage(string $filePath): ?array
     {
         // get file
-        if(!is_file($filePath)) {
+        if (!is_file($filePath)) {
             throw new SpotifyPlaylistException("Invalid file path: $filePath");
         }
         // max file size check
-        if(filesize($filePath) > self::COVER_IMG_MAX_FILE_SIZE) {
+        if (filesize($filePath) > self::COVER_IMG_MAX_FILE_SIZE) {
             throw new SpotifyPlaylistException("File size is above maximum (" . self::COVER_IMG_MAX_FILE_SIZE . "): " . filesize($filePath));
         }
         // get file contents and encode to base64
@@ -214,7 +213,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
     public static function create(Spotify $spotify, User $user, $options): Playlist
     {
         $name = $options['name'] ?? '';
-        if(empty($name)) {
+        if (empty($name)) {
             throw new SpotifyPlaylistException('Cannot create playlist, name is empty');
         }
         $description = $options['description'] ?? '';
@@ -254,7 +253,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
      */
     public function addTrack(Track $track, int $position = 0): ?array
     {
-        if(empty($this->id)) {
+        if (empty($this->id)) {
             throw new SpotifyPlaylistException('Cannot add items to playlist, playlist id is empty');
         }
 
@@ -279,26 +278,25 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
      */
     public function addTracks(Tracks $tracks, int $position = 0): ?array
     {
-        if(empty($this->id)) {
+        if (empty($this->id)) {
             throw new SpotifyPlaylistException('Cannot add items to playlist, playlist id is empty');
         }
         $this->checkTracksExist();
         // convert the trackUris array to an array of uris
         $itemsToAdd = [];
 
-        foreach($tracks as $track) {
+        foreach ($tracks as $track) {
             $itemsToAdd[] = $track->getUri();
         }
 
         // make request
         $response =   parent::addTracksToPlaylist($this->id, $itemsToAdd, $position);
         // update the local model
-        foreach($tracks as $track) {
+        foreach ($tracks as $track) {
             $this->tracks->addTrack($track, $position);
             $position++;
         }
         return $response;
-
     }
 
     /**
@@ -309,16 +307,15 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
      */
     public function removeTracks(Tracks $tracks): ?array
     {
-        if(empty($this->id)) {
+        if (empty($this->id)) {
             throw new SpotifyPlaylistException('Cannot remove items from playlist, playlist id is empty');
         }
         $this->checkTracksExist();
         // convert the trackUris array to an array of objects
         $itemsToRemove = [];
-        foreach($tracks->toArray() as $track) {
+        foreach ($tracks->toArray() as $track) {
             /** @var Track  */
             $itemsToRemove[] = ['uri' => $track->getUri()];
-
         }
         // remove items from playlist
         $response =  parent::removeTracksFromPlaylist($this->id, $itemsToRemove, $this->snapshot_id);
@@ -356,7 +353,6 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
         // update the local model with remote data
         $this->tracks->reorderTracks($rangeStart, $rangeLength, $insertBefore);
         return $response;
-
     }
 
     /**
@@ -373,7 +369,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
     {
 
         // check that the number of tracks to replace is less than the number of tracks in the playlist
-        if(count($tracks) > $this->tracks->getTotal()) {
+        if (count($tracks) > $this->tracks->getTotal()) {
             throw new SpotifyPlaylistException('Cannot replace tracks, number of tracks to replace is greater than the number of tracks in the playlist');
         }
         // replace tracks in playlist
@@ -382,7 +378,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
         // remove all tracks from playlist
         $this->tracks = new PaginatedTracks($this->spotify, []);
         // add the new tracks
-        foreach($tracks as $track) {
+        foreach ($tracks as $track) {
             $this->tracks->addTrack($track);
         }
 
@@ -422,7 +418,7 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
      */
     private function checkTracksExist(): bool
     {
-        if(empty($this->tracks)) {
+        if (empty($this->tracks)) {
             throw new SpotifyPlaylistException('Cannot perform action, no tracks exist or they have not been loaded');
         }
         return true;
@@ -450,6 +446,4 @@ class Playlist extends PlaylistController implements EntityInterface, \JsonSeria
             'uri' => $this->uri,
         ];
     }
-
-
 }
