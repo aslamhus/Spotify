@@ -3,7 +3,6 @@
 
 require_once __DIR__ . '/config.php';
 
-use PHPUnit\Framework\TestCase;
 
 use Aslamhus\SpotifyClient\Auth\AuthCodeToken;
 use Aslamhus\SpotifyClient\Auth\ClientCredentials;
@@ -19,7 +18,7 @@ use Aslamhus\SpotifyClient\Playlist\Playlist;
 use Aslamhus\SpotifyClient\Search\Search;
 use Aslamhus\SpotifyClient\Track\Tracks;
 
-class TestSpotify extends TestCase
+class TestSpotify extends PHPUnit\Framework\TestCase
 {
     private AuthorizationInterface $clientCredentials;
     private SpotifyClient $client;
@@ -42,11 +41,11 @@ class TestSpotify extends TestCase
         ]);
     }
 
-    // public function testGetAccessToken()
-    // {
-    //     $accessToken = $this->clientCredentials->getToken();
-    //     $this->assertNotEmpty($accessToken->getAccessToken());
-    // }
+    public function testGetAccessToken()
+    {
+        $accessToken = $this->clientCredentials->getToken();
+        $this->assertNotEmpty($accessToken->getAccessToken());
+    }
 
     // public function testGetArtistData()
     // {
@@ -106,19 +105,19 @@ class TestSpotify extends TestCase
 
     // }
 
-    public function testPaginatedSearch()
-    {
-        $search = new Search($this->spotify);
-        $search->exec('Steely Dan', 'artist,album');
-        $artistResults = $search->getResultsForType('artist'); // returns SearchResult
-        var_dump($artistResults);
-        // var_dump(array_keys($artistResults->getItems()));
-        // perform a manual search over artists results
-        // logic here
-        // if not found, get next page
-        // $artistResults->next();
+    // public function testPaginatedSearch()
+    // {
+    //     $search = new Search($this->spotify);
+    //     $search->exec('Steely Dan', 'artist,album');
+    //     $artistResults = $search->getResultsForType('artist'); // returns SearchResult
+    //     // var_dump($artistResults);
+    //     // var_dump(array_keys($artistResults->getItems()));
+    //     // perform a manual search over artists results
+    //     // logic here
+    //     // if not found, get next page
+    //     // $artistResults->next();
 
-    }
+    // }
 
     // public function testSearchByTrackName()
     // {

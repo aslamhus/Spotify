@@ -15,7 +15,7 @@ class SpotifyClient
     protected Client $client;
     public const ENDPOINT = 'https://api.spotify.com/v1/';
 
-    public function __construct(string $clientId, string $clientSecret, $endpoint = self::ENDPOINT)
+    public function __construct(string $clientId, string $clientSecret, string $endpoint = self::ENDPOINT)
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
@@ -92,7 +92,6 @@ class SpotifyClient
      * Send authorization request
      *
      * This method is responsible for sending the authorization request to the Spotify API
-     * Used by both SpotifyAccessToken and SpotifyUserAccessToken
      *
      * @param string $endpoint
      * @param array $options

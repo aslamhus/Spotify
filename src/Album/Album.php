@@ -30,7 +30,7 @@ class Album extends AlbumController implements \JsonSerializable
         parent::__construct($spotify);
         $this->spotify = $spotify;
         $this->albumId = $albumId;
-        if(!empty($data)) {
+        if (!empty($data)) {
             $this->parseAlbumData($data);
         }
     }
@@ -90,12 +90,10 @@ class Album extends AlbumController implements \JsonSerializable
 
     public function getTracks()
     {
-        if(empty($this->tracks)) {
+        if (empty($this->tracks)) {
             $this->tracks = parent::fetchTracks($this->albumId);
         }
         return $this->tracks;
-
-
     }
 
     /**
@@ -124,12 +122,11 @@ class Album extends AlbumController implements \JsonSerializable
         $this->type = $data['type'] ?? '';
         $this->uri = $data['uri'] ?? '';
         $this->artists = [];
-        if(!empty($data['artists'])) {
-            foreach($data['artists'] as $artist) {
+        if (!empty($data['artists'])) {
+            foreach ($data['artists'] as $artist) {
                 $this->artists[] = new Artist($this->spotify, $artist['id'], $artist);
             }
         }
-
     }
 
 
@@ -149,11 +146,4 @@ class Album extends AlbumController implements \JsonSerializable
             'tracks' => $this->tracks,
         ];
     }
-
-
-
-
-
-
-
 }

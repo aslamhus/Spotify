@@ -73,9 +73,9 @@ class Spotify
      * Convenience method to Get resource from Spotify API
      *
      * @param string $url
-     * @param array [$query] - optional query parameters, i.e. ['market' => 'US']
-     * @param array [$headers] - optional headers to send with the request
-     * @param string [$key] - the key to use for the data, i.e. 'json', 'form_params', etc.
+     * @param array $query - optional query parameters, i.e. ['market' => 'US']
+     * @param array $headers - optional headers to send with the request
+     * @param string $key - the key to use for the data, i.e. 'json', 'form_params', etc.
      *
      * @return array|null
      */
@@ -90,7 +90,7 @@ class Spotify
      *
      * @param string $url
      * @param mixed $data - the data to post
-     * @param array [$headers] - optional headers to send with the request
+     * @param array $headers - optional headers to send with the request
      *
      * @return array|null
      */
@@ -105,8 +105,8 @@ class Spotify
      *
      * @param string $url
      * @param mixed $data - the data to put
-     * @param array [$headers] - optional headers to send with the request
-     * @param string [$key] - the key to use for the data, i.e. 'json', 'form_params', etc.
+     * @param array $headers - optional headers to send with the request
+     * @param string $key - the key to use for the data, i.e. 'json', 'form_params', etc.
      * @return array|null
      */
     public function put(string $url, mixed $data, ?array $headers = null, string $key = 'json'): ?array
@@ -120,8 +120,8 @@ class Spotify
      *
      * @param string $url
      * @param mixed $data
-     * @param array [$headers] - optional headers to send with the request
-     * @param string [$key] - the key to use for the data, i.e. 'json', 'form_params', etc.
+     * @param array $headers - optional headers to send with the request
+     * @param string $key] - the key to use for the data, i.e. 'json', 'form_params', etc.
      * @return array|null
      */
     public function delete(string $url, mixed $data, ?array $headers = null, string $key = 'json'): ?array
@@ -146,7 +146,7 @@ class Spotify
     {
         $options = [];
         // conditionally set d post data
-        if(!empty($data)) {
+        if (!empty($data)) {
             $options[$key] = $data;
             $options['headers'] = $headers ??  ['Content-Type' => 'application/json'];
         }
@@ -175,13 +175,15 @@ class Spotify
         // make the request
         try {
             $response = $this->client->request($type, $url, $options, $this->accessToken);
-        } catch(SpotifyAccessExpiredException $e) {
+        } catch (SpotifyAccessExpiredException $e) {
+
             $response = $this->handleAccessTokenExpired($type, $url, $options);
         }
         // get the status
         $status = $response->getStatusCode();
+
         // if status is not 200, throw exception
-        if($status !== 200 && $status !== 201 && $status !== 202) {
+        if ($status !== 200 && $status !== 201 && $status !== 202) {
             throw new SpotifyRequestException('Error getting data, http status code: ' . $status);
         }
         // parse response and decode
@@ -204,13 +206,12 @@ class Spotify
     {
         // try to refresh token
         $refreshToken =  $this->client->refreshToken($this->accessToken->getRefreshToken());
-        if($refreshToken !== null) {
+        if ($refreshToken !== null) {
             // if refresh token succeeds, set new access token and try request again
             $this->accessToken = $refreshToken;
             return $this->client->request($type, $url, $options, $this->accessToken);
         }
         throw new SpotifyRequestException('Error refreshing access token');
-
     }
 
     /**
@@ -238,12 +239,9 @@ class Spotify
             'limit'     => $limit,
             'offset'    => $offset,
         ];
-        if(!empty($market)) {
+        if (!empty($market)) {
             $query['market'] = $market;
         }
         return $this->get($url, $query);
     }
-
-
-
 }

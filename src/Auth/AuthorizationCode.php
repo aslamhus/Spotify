@@ -29,7 +29,6 @@ class AuthorizationCode implements AuthorizationInterface, \JsonSerializable
         $response = $this->requestAccessToken($code, $redirectUri);
         // parse token from response
         $this->accessToken = new AccessToken($response);
-
     }
 
     public function getToken(): AccessToken
@@ -100,9 +99,4 @@ class AuthorizationCode implements AuthorizationInterface, \JsonSerializable
     {
         return $this->accessToken->jsonSerialize();
     }
-
-
-
-
-
 }
