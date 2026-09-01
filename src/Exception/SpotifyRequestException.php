@@ -17,7 +17,7 @@ class SpotifyRequestException extends \Exception
 
         $message = "Spotify request error: " . $message;
         // call parent constructor
-        parent::__construct($message, 0, null);
+        parent::__construct($message, $this->statusCode, null);
     }
 
     /**
