@@ -12,16 +12,26 @@ class AccessToken implements \JsonSerializable, AccessTokenInterface
     private string $scope;
     private string $refreshToken;
 
+
+    /**
+     * 
+     * @param array{
+     *  access_token: string,
+     *  token_type: string,
+     *  expires_in: int,
+     *  scope: string,
+     *  refresh_token: string
+     * } $options
+     * @param
+     */
     public function __construct($options = [])
     {
-        $this->accessToken = $options['access_token'];
-        $this->tokenType = $options['token_type'];
-        $this->expiresIn = $options['expires_in'];
+        $this->accessToken = $options['access_token'] ?? '';
+        $this->tokenType = $options['token_type'] ?? '';
+        $this->expiresIn = $options['expires_in'] ?? 0;
         // optional fields depending on the authorization flow
         $this->scope = $options['scope'] ?? '';
         $this->refreshToken = $options['refresh_token'] ?? '';
-
-
     }
 
 
