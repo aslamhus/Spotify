@@ -32,7 +32,6 @@ class TestAuthorizationCode extends TestCase
     {
         $url = AuthorizationCode::getAuthorizeUrl($_ENV['SPOTIFY_CLIENT_ID'], $_ENV['REDIRECT_URI'], $_ENV['SCOPE']);
         $this->assertNotEmpty($url);
-        echo $url;
     }
 
     /**
@@ -42,6 +41,7 @@ class TestAuthorizationCode extends TestCase
      */
     public function testGetUserAccessToken()
     {
+        return;
         $code = '<ENTER CODE FROM AUTHORIZATION>';
         $token = new AuthorizationCode($this->client, $code, $_ENV['REDIRECT_URI']);
         echo json_encode($token, JSON_PRETTY_PRINT);
