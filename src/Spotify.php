@@ -129,6 +129,13 @@ class Spotify
         return $this->performRequest('DELETE', $url, $key, $data, $headers);
     }
 
+    public function refreshToken(): ?AccessToken
+    {
+        return $this->client->refreshToken($this->accessToken['refresh_token'] ?? '');
+    }
+
+
+
     /**
      * Perform request with data
      *
