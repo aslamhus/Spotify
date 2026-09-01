@@ -15,14 +15,14 @@ class SpotifyClient
     protected Client $client;
     public const ENDPOINT = 'https://api.spotify.com/v1/';
 
-    public function __construct(string $clientId, string $clientSecret, string $endpoint = self::ENDPOINT)
+    public function __construct(string $clientId, string $clientSecret, string $endpoint = self::ENDPOINT, array $clientConfig = ['timeout' => 2.0])
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         // set the guzzle client to use for requests
         $this->client = new Client([
             'base_uri' => $endpoint,
-            'timeout'  => 2.0,
+            ...$clientConfig
         ]);
     }
 
@@ -33,7 +33,7 @@ class SpotifyClient
      *
      * @param string $method
      * @param string $uri
-     * @param array [$options]
+     * @param array $options
      * @param AccessToken $token
      * @return ResponseInterface
      */
@@ -73,8 +73,13 @@ class SpotifyClient
                 //   }
                 break;
             case 401:
-                if (isset($body['error']) &&  $body['error']['message'] === 'The access token expired') {
-                    return new SpotifyAccessExpiredException('The access token expired');
+                if (isset($body['error'])) {
+                    if (
+                        $body['error']['message'] === 'The access token expired' ||
+                        $body['error']['message'] === 'Missing/invalid/expired access token'
+                    ) {
+                        return new SpotifyAccessExpiredException('The access token expired');
+                    }
                 }
                 break;
 
@@ -92,6 +97,8 @@ class SpotifyClient
      * Send authorization request
      *
      * This method is responsible for sending the authorization request to the Spotify API
+     * This endpoint can verify whether the refresh token has expired
+     * and also generate a new access token with the authorization code
      *
      * @param string $endpoint
      * @param array $options
@@ -110,6 +117,7 @@ class SpotifyClient
         return json_decode($body, true);
     }
 
+
     public function refreshToken(string $refreshToken): ?AccessToken
     {
         $options = [
@@ -121,6 +129,9 @@ class SpotifyClient
         $response = $this->sendAuthorizationRequest('https://accounts.spotify.com/api/token', $options);
         // if access token is set, return new access token
         if (isset($response['access_token'])) {
+            if (empty($response['refresh_token'])) {
+                $response['refresh_token'] = $refreshToken;
+            }
             return new AccessToken($response);
         }
         return null;
