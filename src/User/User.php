@@ -17,25 +17,23 @@ use Aslamhus\SpotifyClient\Interfaces\EntityInterface;
  */
 class User extends UserController implements EntityInterface, \JsonSerializable
 {
-    private Spotify $spotify;
-    private string $userId = '';
-    private string $display_name = '';
-    private string $country = '';
-    private string $email = '';
-    private array $explicit_content = [];
-    private array $external_urls = [];
-    private array $followers = [];
-    private string $href = '';
-    private array $images = [];
-    private string $product = '';
-    private string $type = '';
-    private string $uri = '';
+    public string $userId = '';
+    public string $display_name = '';
+    public string $country = '';
+    public string $email = '';
+    public array $explicit_content = [];
+    public array $external_urls = [];
+    public array $followers = [];
+    public string $href = '';
+    public array $images = [];
+    public string $product = '';
+    public string $type = '';
+    public string $uri = '';
 
     public function __construct(Spotify $spotify, array $data = [])
     {
         parent::__construct($spotify);
-        $this->spotify = $spotify;
-        if(!empty($data)) {
+        if (!empty($data)) {
             $this->setData($data);
         }
     }
