@@ -131,7 +131,7 @@ class Spotify
 
     public function refreshToken(): ?AccessToken
     {
-        return $this->client->refreshToken($this->accessToken['refresh_token'] ?? '');
+        return $this->client->refreshToken($this->accessToken->getRefreshToken() ?? '');
     }
 
 
